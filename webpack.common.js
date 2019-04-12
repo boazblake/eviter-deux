@@ -19,7 +19,6 @@ module.exports = {
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-chunk.js',
   },
-  resolve: { alias: { zondicons: resolve(__dirname, '/assets/zondicons') } },
   module: {
     rules: [
       {
@@ -78,7 +77,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              presets: [ '@babel/env' ],
+              presets: ['@babel/env'],
             },
           },
         ],
@@ -86,9 +85,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.DefinePlugin({ // <-- key to reducing React's size
+    new webpack.DefinePlugin({
+      // <-- key to reducing React's size
       'process.env': {
-        'NODE_ENV': JSON.stringify('production'),
+        NODE_ENV: JSON.stringify('production'),
       },
     }),
     new CompressionPlugin({
@@ -98,11 +98,11 @@ module.exports = {
       threshold: 10240,
       minRatio: 0.8,
     }),
-    new CopyWebpackPlugin([ { from: 'assets' } ]),
+    new CopyWebpackPlugin([{ from: 'assets' }]),
     new HtmlWebpackPlugin({
-      title: 'Mithril-JSONPlaceholder-PWA',
-      favicon: './assets/favicon.png',
-      manifest:'./src/manifets.json',
+      title: 'Shindigit Your Ultimate Event Planner',
+      favicon: './assets/favicon_io/favicon.ico',
+      manifest: './src/manifets.json',
       template: '../index.html',
     }),
     new WorkboxPlugin.GenerateSW({
@@ -110,13 +110,31 @@ module.exports = {
       // and not allow any straggling "old" SWs to hang around
       clientsClaim: true,
       skipWaiting: true,
+      runtimeCaching: [
+        {
+          urlPattern: new RegExp(
+            'https://fonts.googleapis.com/css?family=Montserrat+Alternates:400,900'
+          ),
+          handler: 'StaleWhileRevalidate',
+        },
+        {
+          urlPattern: new RegExp(
+            'https://us1.prisma.sh/boaz-blake-8951e1/shindigit/dev'
+          ),
+          handler: 'StaleWhileRevalidate',
+        },
+        {
+          urlPattern: new RegExp('sockjs-node/info'),
+          handler: 'StaleWhileRevalidate',
+        },
+      ],
     }),
     new WebpackPwaManifest({
       lang: 'en-US',
-      name: 'JSONplaceholder-mithril',
-      short_name: 'Demo',
+      name: 'Shindigit Your Ultimate Event Planner',
+      short_name: 'Shindigit',
       display: 'standalone',
-      description: 'Demo!',
+      description: 'Shindigit Your Ultimate Event Planner!',
       background_color: '#01579b',
       theme_color: '#01579b',
       'theme-color': '#01579b',
@@ -124,8 +142,8 @@ module.exports = {
       scope: '/',
       icons: [
         {
-          src: resolve('src/assets/favicon.png'),
-          sizes: [96, 128, 192, 256, 384, 512],
+          src: resolve('src/assets/favicon_io/favicon.ico'),
+          sizes: [16, 32],
           destination: join('assets', 'icons'),
         },
       ],

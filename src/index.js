@@ -4,7 +4,6 @@ import { model } from './Model.js'
 
 import { App } from './App.js'
 
-
 if (module.hot) {
   module.hot.accept()
 }
@@ -15,8 +14,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Styles
 import './index.css'
-import './utils/animations.css'
-import './utils/loader.css'
+import './assets/animations.css'
+import './assets/loader.css'
 
 function getProfile(w) {
   if (w < 668) return 'phone'
@@ -40,15 +39,17 @@ function checkWidth() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').then(registration => {
-      console.log('🧟 SW registered: ', registration)
-    }).catch(registrationError => {
-      console.log('⚙️ SW registration failed: ', registrationError)
-    })
+    navigator.serviceWorker
+      .register('./service-worker.js')
+      .then((registration) => {
+        console.log('🧟 SW registered: ', registration)
+      })
+      .catch((registrationError) => {
+        console.log('⚙️ SW registration failed: ', registrationError)
+      })
   })
 }
 
-
 checkWidth()
 
-m.route(root, '/posts', App(model))
+m.route(root, '/login', App(model))

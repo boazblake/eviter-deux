@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { animateSidebarEntrance } from '../utils/animations.js'
+import { animateSidebarEntrance } from '../assets/index.js'
 
 const Tab = ({ attrs: { key } }) => {
   return {
@@ -13,13 +13,13 @@ const Tab = ({ attrs: { key } }) => {
           href: `${tab}`,
           oncreate: m.route.link,
         },
-        tab.split('/')[1]
+        tab
       ),
   }
 }
 
 const Sidebar = ({ attrs: { model } }) => {
-  let tabs = Object.keys(model.reqs.urls)
+  let tabs = model.pages
 
   return {
     oncreate: animateSidebarEntrance,

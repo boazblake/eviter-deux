@@ -1,43 +1,20 @@
 import m from 'mithril'
 import Hamburger from './Hamburger.js'
-import { animateChildrenLimitsEntrance, animateChildrenLimitsExit, animate } from '../utils/animations.js'
+import { animate } from '../assets/index.js'
 
-
-const Selector = {
-  onbeforeremove: animateChildrenLimitsExit,
-  view: ({ attrs: { model } }) =>
-    m(
-      '.limits',
-      model.limits.map((limit, idx) =>
-        m(
-          'button.btn.limit',
-          {
-            oncreate: animateChildrenLimitsEntrance(idx),
-            onclick: () => {
-              model.state.limit = limit
-              model.state.showLimits = false
-            },
-            key: idx,
-          },
-          limit
-        )
-      )
-    ),
-}
-
-const ChangeLimits = {
-  view: ({ attrs: { model } }) =>
-    m('.changeLimits', [
-      m(
-        'button.changeLimitBtn',
-        {
-          onclick: () => model.toggleLimits(model),
-        },
-        'Change Limit'
-      ),
-      model.state.showLimits && m(Selector, { model }),
-    ]),
-}
+// const ChangeLimits = {
+//   view: ({ attrs: { model } }) =>
+//     m('.changeLimits', [
+//       m(
+//         'button.changeLimitBtn',
+//         {
+//           onclick: () => model.toggleLimits(model),
+//         },
+//         'Change Limit'
+//       ),
+//       model.state.showLimits && m(Selector, { model }),
+//     ]),
+// }
 
 const Header = {
   oncreate: animate('slideDown'),
@@ -47,7 +24,7 @@ const Header = {
       {
         id: 'header',
       },
-      [ m(Hamburger, { model }), m(ChangeLimits, { model }) ]
+      [m(Hamburger, { model })]
     ),
 }
 

@@ -1,173 +1,135 @@
 import m from 'mithril'
+
 import Layout from './components/Layout.js'
-import {makeRoutes, isEmpty, init, infiniteScroll, animateComponentEntrance } from './utils/index.js'
 
-const IsLoading = m('.holder',  [
-  m('.preloader', [ m('div'), m('div'), m('div'), m('div'), m('div'), m('div'), m('div') ]),
-])
+import { isEmpty } from 'ramda'
 
-const Post = {
-  view: ({ attrs: { key, item: { title, body } } }) => {
-    return m(
-      '.grid-item.row.post',
-      {
-        id: `post-${key}`,
-      },
-      [ m('h1.left', title), m('p.right', body) ]
-    )
-  },
+import { loginTask } from './utils/requests.js'
+
+const logUserIn = (model) => (data) => {
+  const onS = (user) => {
+    model.user = user
+    return console.log(model)
+    // m.route.set(`events/${user.id}`)
+  }
+
+  const onE = (e) => console.error('err', e)
+
+  let dto = data
+
+  loginTask(dto).fork(onS, onE)
 }
 
-const Comment = {
-  view: ({ attrs: { key, item: { email, name, body } } }) => {
-    return m(
-      '.grid-item.row.comment',
-      {
-        id: `comment-${key}`,
-      },
-      [ m('h1.left', name), m('p.left', email), m('p.left', body) ]
-    )
-  },
+const checkAuth = (model) => {
+  if (!isEmpty(model.user)) {
+    return m.route.set(`/events/${model.user.name}`)
+  }
 }
 
-const Album = {
-  view: ({ attrs: { key, item: { title } } }) => {
-    return m(
-      '.grid-item.album',
+const Login = {
+  oninit: (v) => console.log('state', v),
+  view: (v) =>
+    m(
+      'form.form',
       {
-        id: `album-${key}`,
-      },
-      [ m('h1', title) ]
-    )
-  },
-}
-
-const Photo = {
-  view: ({ attrs: { key, item: { title, thumbnailUrl } } }) => {
-    return m(
-      '.grid-item.photo',
-      {
-        id: `photo-${key}`,
-      },
-      [
-        m('h1.left', title),
-        m('img.right', {
-          src: thumbnailUrl, alt: 'img',
-        }),
-      ]
-    )
-  },
-}
-
-const Todo = ({ attrs: { item: { completed } } }) => {
-  return {
-    view: ({ attrs: { key, item: { title } } }) => {
-      return m(
-        '.grid-item.todo',
-        {
-          id: `todo-${key}`,
-          key,
+        onsubmit: (e) => {
+          e.preventDefault()
+          logUserIn(v.attrs.model)(v.state)
         },
-        [
-          m('h1.left', title),
-          m(
-            'input[type=checkbox].right',
-            {
-              onclick: () => {
-                completed = !completed
-              },
-              checked: completed,
-            },
-            'Done'
-          ),
-        ]
-      )
-    },
-  }
-}
-
-const User = {
-  view: ({  attrs: { key, item: { email, name, phone, username, website } } }) =>
-    m(
-      '.grid-item.user',
-      {
-        id: `user-${key}`,
-        key,
       },
       [
-        m('.row', [ m('p.left', { for: 'name' }, 'name'), m('p.right.bold', { name: 'name' }, name) ]),
-        m('.row', [ m('p.left', { for: 'email' }, 'email'), m('p.right.bold', { name: 'email' }, email) ]),
-        m('.row', [ m('p.left', { for: 'phone' }, 'phone'), m('p.right.bold', { name: 'phone' }, phone) ]),
-        m('.row', [
-          m('p.left', { for: 'username' }, 'username'),
-          m('p.right.bold', { name: 'username' }, username),
+        m('fieldset', [
+          m('legend', 'Login'),
+          m('label', { for: 'email' }, 'email'),
+          m('input', {
+            type: 'email',
+            id: 'email',
+            name: 'login',
+            onchange: (e) => (v.state.email = e.target.value),
+          }),
+          m('br'),
+          m('label', { for: 'password' }, 'Password'),
+          m('input', {
+            type: 'password',
+            id: 'password',
+            name: 'login',
+            onchange: (e) => (v.state.password = e.target.value),
+          }),
+          m('button[type=submit]', 'Submit'),
         ]),
-        m('.row', [ m('p.left', { for: 'website' }, 'website'), m('p.right.bold', { name: 'website' }, website) ]),
+        m(
+          'a',
+          {
+            oncreate: m.route.link,
+            href: '/register',
+          },
+          'register'
+        ),
       ]
     ),
 }
 
-const makeItem = type => {
-  switch (type) {
-  case '/posts':
-    return Post
-  case '/comments':
-    return Comment
-  case '/albums':
-    return Album
-  case '/photos':
-    return Photo
-  case '/todos':
-    return Todo
-  case '/users':
-    return User
-  }
+const Register = {
+  view: () =>
+    m('form.form', [
+      m('fieldset', [
+        m('legend', 'Register'),
+        m('label', { for: 'email' }, 'email'),
+        m('input', { type: 'email', id: 'email', name: 'Register' }),
+        m('br'),
+        m('label', { for: 'password' }, 'Password'),
+        m('input', { type: 'password', id: 'password', name: 'Register' }),
+      ]),
+      m(
+        'a',
+        {
+          oncreate: m.route.link,
+          href: '/login',
+        },
+        'login'
+      ),
+    ]),
 }
 
+const LoginPage = {
+  oninit: () => {},
+  view: ({ attrs: { model } }) => m('.component', m(Login, { model })),
+}
 
+const RegisterPage = {
+  oninit: () => {},
+  view: ({ attrs: { model } }) => m('.component', m(Register, { model })),
+}
 
-const Component = {
-  view: ({ attrs: { model } }) => {
-    let route = model.state.route
-    let Item = makeItem(route)
-    let data = model.data[route].data
-
-    return m(
-      'section.component',
-      {
-        id: 'component',
-        route: model.state.route,
-        onscroll: infiniteScroll(model),
-      },
-      isEmpty(data)
-        ? m('.loader', IsLoading)
-        : data.map((_item, idx) =>
-          m(Item, {
-            oncreate: animateComponentEntrance(idx),
-            key: idx,
-            item: _item,
-            model,
-          })
-        )
-    )
+export const App = (model) => ({
+  '/login': {
+    onmatch: () => {
+      model.state.route = 'login'
+      checkAuth(model)
+    },
+    render: () => m(Layout, { model }, m(LoginPage, { model })),
   },
-}
-
-
-const toRoute = model => ({
-  onmatch: (_, path) =>
-    init(model)(path),
-  render: () =>
-    m(
-      Layout,
-      {
-        model,
-      },
-      m(Component, {
-        model,
-      })
-    ),
+  '/register': {
+    onmatch: () => {
+      model.state.route = 'register'
+    },
+    render: () => m(Layout, { model }, m(RegisterPage, { model })),
+  },
+  '/events/:name': {
+    onmatch: () => {
+      model.state.route = 'events'
+      checkAuth(model)
+    },
+    render: (a) => {
+      console.log('render dash', a)
+      console.log('render dash', model)
+    },
+  },
+  '/logout': {
+    onmatch: () => {
+      model.user = {}
+      checkAuth(model)
+    },
+    render: () => m(Layout, { model }, m(Login, { model })),
+  },
 })
-
-export const App = model =>
-  model.routes.reduce(makeRoutes(model)(toRoute),{})
