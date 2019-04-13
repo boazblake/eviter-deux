@@ -12,22 +12,22 @@ const userLoggedIn = (model) => ({
 }) => {
   model.user.id = id
   model.errors = null
-  m.route.set(`/attendances/${model.user.id}`)
+  m.route.set(`/invites/${model.user.id}`)
 }
 
 const userRegistered = (model) => ({ createUser: { id } }) => {
   model.user.id = id
   model.errors = null
-  m.route.set(`/attendances/${model.user.id}`)
+  m.route.set(`/invites/${model.user.id}`)
 }
 
 const onE = (model) => (errors) => (model.errors = pluck('message', errors))
 
 const logUserIn = (model) => (data) =>
-  loginReq(model)(data).then(userLoggedIn(model), onE(model))
+  loginReq(model)(data).fork(onE(model), userLoggedIn(model))
 
 const registerUser = (model) => (data) =>
-  registerReq(model)(data).then(userRegistered(model), onE(model))
+  registerReq(model)(data).fork(onE(model), userRegistered(model))
 
 const Login = {
   view: ({ attrs, state }) =>

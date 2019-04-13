@@ -3,7 +3,7 @@ import { isNil } from 'ramda'
 
 import Layout from './components/Layout.js'
 import { Login, Register } from './Login/component'
-import { Attendances } from './Attendances/component'
+import { Invites } from './Invites/component'
 import { checkAuth } from './auth.js'
 
 const LoginPage = {
@@ -14,8 +14,8 @@ const RegisterPage = {
   view: ({ attrs: { model } }) => m('.component', m(Register, { model })),
 }
 
-const AttendancesPage = {
-  view: ({ attrs: { model } }) => m('.component', m(Attendances, { model })),
+const InvitesPage = {
+  view: ({ attrs: { model } }) => m('.component', m(Invites, { model })),
 }
 
 export const App = (model) => ({
@@ -31,12 +31,12 @@ export const App = (model) => ({
     },
     render: () => m(Layout, { model }, m(RegisterPage, { model })),
   },
-  '/attendances/:id': {
+  '/invites/:id': {
     onmatch: () => {
       if (isNil(model.user.id)) return m.route.set('/login')
-      model.state.route = 'attendance'
+      model.state.route = 'invites'
     },
-    render: () => m(Layout, { model }, m(AttendancesPage, { model })),
+    render: () => m(Layout, { model }, m(InvitesPage, { model })),
   },
   '/logout': {
     onmatch: () => {

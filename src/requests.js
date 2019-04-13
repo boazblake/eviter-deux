@@ -1,3 +1,5 @@
+import Task from 'data.task'
+
 const url = 'https://api.graph.cool/simple/v1/cj5u4etx4bw5t01228cbd6pw9'
 
 const BearerToken =
@@ -12,17 +14,20 @@ const parseResponse = (model) => ({ data, errors }) => {
 
 export const postQl = (model) => (query) => {
   model.state.isLoading = true
-  return m
-    .request({
-      method: 'POST',
-      url: url,
-      withCredentials: false,
-      data: makeQuery(query),
-      headers: {
-        Authorization: BearerToken,
-      },
-    })
-    .then(parseResponse(model))
+  return new Task((rej, res) =>
+    m
+      .request({
+        method: 'POST',
+        url: url,
+        withCredentials: false,
+        data: makeQuery(query),
+        headers: {
+          Authorization: BearerToken,
+        },
+      })
+      .then(parseResponse(model))
+      .then(res, rej)
+  )
 }
 
 export const loginReq = (model) => ({ email, password }) => {
@@ -41,26 +46,26 @@ export const registerReq = (model) => ({ email, password }) => {
   return postQl(model)({ query })
 }
 
-export const findAllAttendances = (model) => {
-  let query = `query{allAttendances(filter:{user:{id:${JSON.stringify(
+export const findAllInvites = (model) => {
+  let query = `query{allInvitations(filter:{user:{id:${JSON.stringify(
     model.user.id
   )}}}){id}}`
 
   return postQl(model)({ query })
 }
 
-export const getAttendance = (model) => (id) => {
-  let query = `query{Attendance(id:${JSON.stringify(
+export const getInvite = (model) => (id) => {
+  let query = `query{Invite(id:${JSON.stringify(
     id
-  )}){id,partySize,response,event{id, date, title, hostedBy{email} attendances{partySize, response}}}}`
+  )}){id,partySize,response,event{id, date, title, hostedBy{email} invitations{partySize, response}}}}`
 
   return postQl(model)({ query })
 }
 
-export const updateAttendanceWithResponse = (model) => (key) => (rsvp) => {
-  let query = `mutation{updateAttendance(id:${JSON.stringify(
+export const updateInviteWithResponse = (model) => (key) => (rsvp) => {
+  let query = `mutation{updateInvite(id:${JSON.stringify(
     key
-  )},response:${rsvp}){id,partySize,response,event{id,date,title,hostedBy{email}attendances{partySize, response}}}}`
+  )},response:${rsvp}){id,partySize,response,event{id,date,title,hostedBy{email}invitations{partySize, response}}}}`
 
   return postQl(model)({ query })
 }
@@ -78,9 +83,9 @@ export const updateAttendanceWithResponse = (model) => (key) => (rsvp) => {
 //   }
 // }
 
-//create attendance
+//create Invite
 // mutation {
-// createAttendance(
+// createInvite(
 //   userId: "cjue72u6q007t01390uzladz5",
 //   eventId: "cjueplkft04hn0101usyxubaz",
 //   partySize: 1,
@@ -99,7 +104,7 @@ export const updateAttendanceWithResponse = (model) => (key) => (rsvp) => {
 //   ){
 //     id
 //   }
-// allAttendances(filter: {
+// allInvitations(filter: {
 //   user: {
 //     id: "cjue72u6q007t01390uzladz5"
 //   }
