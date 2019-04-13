@@ -52,7 +52,15 @@ export const findAllAttendances = (model) => {
 export const getAttendance = (model) => (id) => {
   let query = `query{Attendance(id:${JSON.stringify(
     id
-  )}){id,partySize,response,event{id, date, title, hostedBy{email}}}}`
+  )}){id,partySize,response,event{id, date, title, hostedBy{email} attendances{partySize, response}}}}`
+
+  return postQl(model)({ query })
+}
+
+export const updateAttendanceWithResponse = (model) => (key) => (rsvp) => {
+  let query = `mutation{updateAttendance(id:${JSON.stringify(
+    key
+  )},response:${rsvp}){id,partySize,response,event{id,date,title,hostedBy{email}attendances{partySize, response}}}}`
 
   return postQl(model)({ query })
 }

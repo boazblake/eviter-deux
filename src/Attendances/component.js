@@ -13,10 +13,8 @@ const onLoadE = (model) => (err) => {
 }
 
 export const Attendances = {
-  oninit: ({ attrs: { model } }) => {
-    console.log('attendances on init', model)
-    findAllAttendances(model).then(onLoadS(model), onLoadE(model))
-  },
+  oninit: ({ attrs: { model } }) =>
+    findAllAttendances(model).then(onLoadS(model), onLoadE(model)),
   view: ({ attrs: { model } }) =>
     m(
       '.attendaces',
