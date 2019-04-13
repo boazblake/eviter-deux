@@ -13,10 +13,6 @@
   box-sizing: border-box;
 }
 
-.bold {
-  font-weight: 900;
-}
-
 body,
 html {
   scroll-behavior: smooth;
@@ -97,6 +93,44 @@ html {
 .form {
   width: 80%;
   margin: 0 auto;
+
+  .error {
+    color: red;
+  }
+
+  .fieldset {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-content: center;
+
+    .fields {
+      display: flex;
+      flex-flow: column;
+      margin-bottom: 5px;
+    }
+  }
+
+  .submit {
+    height: 50px;
+    width: 100%;
+    background-color: #ecf0f1;
+    color: #34495e;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .submitting {
+    height: 50px;
+    width: 100%;
+    background-color: #34495e;
+    color: #ecf0f1;
+    cursor: not-allowed;
+  }
+}
+
+.bold {
+  font-weight: 900;
 }
 
 .grid-item {

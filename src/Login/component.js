@@ -1,0 +1,132 @@
+import m from 'mithril'
+import { loginReq, registerReq } from '../requests.js'
+import { pluck, or, isNil, not } from 'ramda'
+
+const validateData = ({ email, password }) =>
+  not(or(isNil(email), isNil(password)))
+
+const userLoggedIn = (model) => ({
+  signinUser: {
+    user: { id },
+  },
+}) => {
+  model.user.id = id
+  model.errors = null
+  m.route.set(`/attendances/${model.user.id}`)
+}
+
+const userRegistered = (model) => ({ createUser: { id } }) => {
+  model.user.id = id
+  model.errors = null
+  m.route.set(`/attendances/${model.user.id}`)
+}
+
+const onE = (model) => (errors) => (model.errors = pluck('message', errors))
+
+const logUserIn = (model) => (data) =>
+  loginReq(model)(data).then(userLoggedIn(model), onE(model))
+
+const registerUser = (model) => (data) =>
+  registerReq(model)(data).then(userRegistered(model), onE(model))
+
+const Login = {
+  view: ({ attrs, state }) =>
+    m(
+      'form.form',
+      {
+        onsubmit: (e) => {
+          attrs.model.errors = null
+          e.preventDefault()
+          validateData(state) ? logUserIn(attrs.model)(state) : ''
+        },
+      },
+      [
+        m('fieldset.fieldset', [
+          m('legend', 'Login'),
+          m('.fields', [
+            m('label', { for: 'email' }, 'email'),
+            m('input', {
+              type: 'email',
+              id: 'email',
+              name: 'login',
+              onchange: (e) => (state.email = e.target.value),
+            }),
+            m('label', { for: 'password' }, 'Password'),
+            m('input', {
+              type: 'password',
+              id: 'password',
+              name: 'login',
+              onchange: (e) => (state.password = e.target.value),
+            }),
+          ]),
+          m(
+            'button[type=submit]',
+            {
+              class: attrs.model.state.isLoading ? 'submitting' : 'submit',
+            },
+            attrs.model.state.isLoading ? 'Submitting' : 'Submit'
+          ),
+          attrs.model.errors ? m('p.error', attrs.model.errors[0]) : '',
+        ]),
+        m(
+          'a',
+          {
+            oncreate: m.route.link,
+            href: '/register',
+          },
+          'register'
+        ),
+      ]
+    ),
+}
+
+const Register = {
+  view: ({ attrs, state }) =>
+    m(
+      'form.form',
+      {
+        onsubmit: (e) => {
+          attrs.model.errors = null
+          e.preventDefault()
+          validateData(state) ? registerUser(attrs.model)(state) : ''
+        },
+      },
+      [
+        m('fieldset.fieldset', [
+          m('legend', 'register'),
+          m('.fields', [
+            m('label', { for: 'email' }, 'email'),
+            m('input', {
+              type: 'email',
+              id: 'email',
+              name: 'register',
+              onchange: (e) => (state.email = e.target.value),
+            }),
+            m('label', { for: 'password' }, 'Password'),
+            m('input', {
+              type: 'password',
+              id: 'password',
+              name: 'register',
+              onchange: (e) => (state.password = e.target.value),
+            }),
+          ]),
+          m(
+            'button[type=submit]',
+            { class: attrs.model.state.isLoading ? 'submitting' : 'submit' },
+            attrs.model.state.isLoading ? 'Submitting' : 'Submit'
+          ),
+          attrs.model.errors ? m('p.error', attrs.model.errors[0]) : '',
+        ]),
+        m(
+          'a',
+          {
+            oncreate: m.route.link,
+            href: '/login',
+          },
+          'login'
+        ),
+      ]
+    ),
+}
+
+export { Login, Register }
