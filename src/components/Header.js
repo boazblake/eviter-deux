@@ -1,20 +1,57 @@
 import m from 'mithril'
 import Hamburger from './Hamburger.js'
 import { animate } from '../assets/index.js'
+import { makeRoute } from '../utils/index.js'
 
-// const ChangeLimits = {
-//   view: ({ attrs: { model } }) =>
-//     m('.changeLimits', [
-//       m(
-//         'button.changeLimitBtn',
-//         {
-//           onclick: () => model.toggleLimits(model),
-//         },
-//         'Change Limit'
-//       ),
-//       model.state.showLimits && m(Selector, { model }),
-//     ]),
-// }
+const Btn = {
+  view: ({ attrs: { route, label } }) => [
+    m(
+      'button.Btn',
+      {
+        onclick: () => m.route.set(route),
+      },
+      label
+    ),
+  ],
+}
+
+const actionsAt = {
+  groups: (model) => [
+    m(Btn, {
+      route: `/${model.user.username}/new-group`,
+      label: 'Add Group',
+    }),
+  ],
+  login: () => ['LOGIN PAGE'],
+  events: (model) => [
+    m(Btn, {
+      route: `/${model.user.username}/${makeRoute(
+        model.state.group.name
+      )}/new-event`,
+      label: 'Add Event',
+    }),
+  ],
+  register: () => ['REGISTER PAGE'],
+  newGroup: (model) => [
+    m(Btn, {
+      route: `/${model.user.username}/groups`,
+      label: 'Back to Groups',
+    }),
+  ],
+  newEvent: (model) => [
+    m(Btn, {
+      route: `/${model.user.username}/groups${makeRoute(
+        model.state.group.name
+      )}`,
+      label: 'Back to Group',
+    }),
+  ],
+}
+
+const Actions = {
+  view: ({ attrs: { model } }) =>
+    m('.actions', actionsAt[model.state.route](model)),
+}
 
 const Header = {
   oncreate: animate('slideDown'),
@@ -24,7 +61,7 @@ const Header = {
       {
         id: 'header',
       },
-      [m(Hamburger, { model })]
+      [m(Hamburger, { model }), m(Actions, { model })]
     ),
 }
 

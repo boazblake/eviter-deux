@@ -133,6 +133,7 @@ html {
   font-weight: 900;
 }
 
+.group,
 .attendance {
   min-height: fit-content;
   padding: 4px 10px;
@@ -240,7 +241,7 @@ html {
   }
 }
 
-.changeLimitBtn {
+.Btn {
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;

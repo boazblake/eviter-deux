@@ -4,21 +4,25 @@ import { findAllInvites } from '../requests.js'
 
 import { Invite } from './Invite/component.js'
 
-const onLoadS = (model) => ({ allInvites }) => (model.user.invites = allInvites)
+const onLoadSuccess = (state) => ({ allInvitations }) =>
+  (state.invites = allInvitations)
 
-const onLoadE = (model) => (err) => {
-  model.err = err
-  console.log('fail', model)
+const onLoadError = (state) => (err) => {
+  state.error = err
+  console.log('fail', state)
 }
 
 export const Invites = {
-  oninit: ({ attrs: { model } }) =>
-    findAllInvites(model).fork(onLoadE(model), onLoadS(model)),
-  view: ({ attrs: { model } }) =>
-    m(
+  oninit: ({ attrs: { model }, state }) => {
+    state.invites = []
+    state.errors = {}
+    findAllInvites(model).fork(onLoadError(state), onLoadSuccess(state))
+  },
+  view: ({ attrs: { model }, state }) => {
+    console.log('state', state)
+    return m(
       '.attendaces',
-      model.user.invites.map(({ id }) =>
-        m(Invite, { model, key: id }, `id: ${id}`)
-      )
-    ),
+      state.invites.map(({ id }) => m(Invite, { model, key: id }, `id: ${id}`))
+    )
+  },
 }

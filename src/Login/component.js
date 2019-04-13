@@ -7,18 +7,20 @@ const validateData = ({ email, password }) =>
 
 const userLoggedIn = (model) => ({
   signinUser: {
-    user: { id },
+    user: { id, username },
   },
 }) => {
   model.user.id = id
+  model.user.username = username
   model.errors = null
-  m.route.set(`/invites/${model.user.id}`)
+  m.route.set(`/${model.user.username}/groups/`)
 }
 
-const userRegistered = (model) => ({ createUser: { id } }) => {
+const userRegistered = (model) => ({ createUser: { id, username } }) => {
   model.user.id = id
+  model.user.username = username
   model.errors = null
-  m.route.set(`/invites/${model.user.id}`)
+  m.route.set(`/${model.user.username}/groups/`)
 }
 
 const onE = (model) => (errors) => (model.errors = pluck('message', errors))
@@ -101,6 +103,13 @@ const Register = {
               id: 'email',
               name: 'register',
               onchange: (e) => (state.email = e.target.value),
+            }),
+            m('label', { for: 'username' }, 'username'),
+            m('input', {
+              type: 'text',
+              id: 'username',
+              name: 'register',
+              onchange: (e) => (state.username = e.target.value),
             }),
             m('label', { for: 'password' }, 'Password'),
             m('input', {

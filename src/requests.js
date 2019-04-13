@@ -1,9 +1,10 @@
 import Task from 'data.task'
 
+import TOKEN from './.secret.js'
+
 const url = 'https://api.graph.cool/simple/v1/cj5u4etx4bw5t01228cbd6pw9'
 
-const BearerToken =
-  'shindigit eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTUwODE4NzcsImNsaWVudElkIjoiY2o1dTRldHg0Ync1dTAxMjJtYnlpdTJ1eiIsInByb2plY3RJZCI6ImNqNXU0ZXR4NGJ3NXQwMTIyOGNiZDZwdzkiLCJwZXJtYW5lbnRBdXRoVG9rZW5JZCI6ImNqdWU3bGpyYzVrcnowMTQ0ZGZzMng0bzQifQ.1oMt3f6TOsRtjTc0a_-9aPRemGWvs3CJ8BoYaayRdHk'
+const BearerToken = `shindigit ${TOKEN}`
 
 const makeQuery = (string) => JSON.parse(JSON.stringify(string))
 
@@ -33,15 +34,25 @@ export const postQl = (model) => (query) => {
 export const loginReq = (model) => ({ email, password }) => {
   let query = `mutation {signinUser(email:{email:${JSON.stringify(
     email
-  )},password:${JSON.stringify(password)}}){user {id}}}`
+  )},password:${JSON.stringify(password)}}){user {id, username}}}`
 
   return postQl(model)({ query })
 }
 
-export const registerReq = (model) => ({ email, password }) => {
+export const registerReq = (model) => ({ email, password, username }) => {
   let query = `mutation{createUser(authProvider:{email:{email:${JSON.stringify(
     email
-  )},password:${JSON.stringify(password)}}){id}}`
+  )},password:${JSON.stringify(password)},username:${JSON.stringify(
+    username
+  )}){id, username}}`
+
+  return postQl(model)({ query })
+}
+
+export const findAllGroups = (model) => {
+  let query = `query{allGroups(filter:{members_every:{id:${JSON.stringify(
+    model.user.id
+  )}}}){id}}`
 
   return postQl(model)({ query })
 }
@@ -53,6 +64,30 @@ export const findAllInvites = (model) => {
 
   return postQl(model)({ query })
 }
+
+export const getGroup = (model) => (id) => {
+  let query = `query{Group(id:${JSON.stringify(id)}){id, name, members {id}}}`
+
+  return postQl(model)({ query })
+}
+
+export const createGroup = (model) => ({ data: { name } }) => {
+  let query = `mutation{createGroup(name:${JSON.stringify(
+    name
+  )}, membersIds:[${JSON.stringify(model.user.id)}]){id, name, members{id}}}`
+
+  return postQl(model)({ query })
+}
+
+// export const joinGroup = (model) => ({ data: { name } }) => {
+//   console.log(name)
+
+//   let query = `mutation{createGroup(name:${JSON.stringify(
+//     name
+//   )}, members:[${JSON.stringify(model.user.id)}]){id, name, members{id}}}`
+
+//   return postQl(model)({ query })
+// }
 
 export const getInvite = (model) => (id) => {
   let query = `query{Invite(id:${JSON.stringify(

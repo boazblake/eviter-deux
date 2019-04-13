@@ -1,14 +1,11 @@
 import m from 'mithril'
-
 import { getInvite, updateInviteWithResponse } from '../../requests.js'
-
-const updateInviteResponse = (model) => (state) => (key) => (rsvp) =>
-  updateInviteWithResponse(model)(key)(rsvp).fork(
-    onLoadE(state),
-    onLoadS(state)
-  )
-
 import { format } from 'date-fns'
+
+const updateInviteResponse = (model) => (key) => (rsvp) =>
+  updateInviteWithResponse(model)(key)(rsvp).map(() =>
+    m.route.set(m.route.get('invites'), null, { state: { key: Date.now() } })
+  )
 
 const rsvps = ['Yes', 'No', 'Maybe']
 
@@ -59,7 +56,7 @@ export const Invite = {
               {
                 onclick: () => {
                   state.invite.response = rsvp
-                  updateInviteResponse(model)(state)(key)(rsvp)
+                  updateInviteResponse(model)(key)(rsvp)
                 },
               },
               rsvp
