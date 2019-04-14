@@ -134,7 +134,8 @@ html {
 }
 
 .group,
-.attendance {
+.attendance,
+.invite {
   min-height: fit-content;
   padding: 4px 10px;
   border: 1.5px dashed grey;

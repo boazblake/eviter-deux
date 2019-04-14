@@ -3,14 +3,12 @@ import { getInvite, updateInviteWithResponse } from '../../requests.js'
 import { format } from 'date-fns'
 
 const updateInviteResponse = (model) => (key) => (rsvp) =>
-  updateInviteWithResponse(model)(key)(rsvp).map(() =>
-    m.route.set(m.route.get('invites'), null, { state: { key: Date.now() } })
-  )
+  updateInviteWithResponse(model)(key)(rsvp)
 
 const rsvps = ['Yes', 'No', 'Maybe']
 
 const onLoadS = (state) => ({
-  Invite: {
+  Invitation: {
     response,
     partySize,
     event: {

@@ -23,9 +23,7 @@ export const Group = {
         {
           onclick: () => {
             return m.route.set(
-              `/${model.user.username}/${makeRoute(
-                model.state.group.name
-              )}/events`
+              `/${model.user.username}/${makeRoute(state.group.name)}/events`
             )
           },
         },

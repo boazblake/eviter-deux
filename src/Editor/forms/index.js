@@ -1,5 +1,7 @@
 import m from 'mithril'
 
+import { format } from 'date-fns'
+
 export const groupForm = (state) => [
   m('fieldset.fieldset', [
     m('legend', 'Create Group'),
@@ -10,7 +12,6 @@ export const groupForm = (state) => [
         id: 'name',
         name: 'name',
         onchange: (e) => {
-          console.log(e.target.value, state)
           state.data.name = e.target.value
         },
       }),
@@ -29,7 +30,6 @@ export const eventForm = (state) => [
         id: 'title',
         name: 'title',
         onchange: (e) => {
-          console.log(e.target.value, state)
           state.data.title = e.target.value
         },
       }),
@@ -41,7 +41,6 @@ export const eventForm = (state) => [
         id: 'description',
         name: 'description',
         onchange: (e) => {
-          console.log(e.target.value, state)
           state.data.description = e.target.value
         },
       }),
@@ -53,7 +52,6 @@ export const eventForm = (state) => [
         id: 'location',
         name: 'location',
         onchange: (e) => {
-          console.log(e.target.value, state)
           state.data.location = e.target.value
         },
       }),
@@ -65,8 +63,7 @@ export const eventForm = (state) => [
         id: 'date',
         name: 'date',
         onchange: (e) => {
-          console.log(e.target.value, state)
-          state.data.date = e.target.value
+          state.data.date = format(e.target.value, 'GG')
         },
       }),
     ]),

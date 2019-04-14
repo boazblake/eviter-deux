@@ -1,7 +1,15 @@
 import m from 'mithril'
 
 import { groupForm, eventForm } from './forms/index.js'
-import { getGroup, createGroup } from '../requests.js'
+import {
+  getGroup,
+  createGroup,
+  createEvent,
+  editGroup,
+  editEvent,
+  joinEvent,
+} from '../requests.js'
+import { makeRoute } from '../utils/index.js'
 
 const getGroupData = (model) => (id) => getGroup(model)(id)
 const onInitSuccess = (state) => (data) => (state.data = data)
@@ -12,18 +20,48 @@ const onError = (state) => (error) => {
 }
 
 const validateData = (data) => {
-  console.log('valiudate data', data)
+  // console.log('valiudate data', data)
   return data
 }
 
-const onSaveSuccess = (model) => (data) => {
+const onSaveGroupSuccess = (model) => (data) => {
   console.log('saved', model, data)
   m.route.set(`/${model.user.username}/groups`)
 }
 
+const onSaveEventSuccess = (model) => (data) => {
+  console.log(
+    'saved',
+    model,
+    data,
+    'route',
+    `/${model.user.username}/${makeRoute(model.state.group.name)}/events`
+  )
+
+  m.route.set(
+    `/${model.user.username}/${makeRoute(model.state.group.name)}/events`
+  )
+}
+
 const saveForm = (model) => (state) => {
   console.log('save form', model.state, model.user, state)
-  createGroup(model)(state).fork(onError(state), onSaveSuccess(model))
+  if (model.state.route == 'newGroup') {
+    return createGroup(model)(state).fork(
+      onError(state),
+      onSaveGroupSuccess(model)
+    )
+  }
+  if (model.state.route == 'newEvent') {
+    return createEvent(model)(state)
+      .chain(joinEvent(model))
+      .fork(onError(state), onSaveEventSuccess(model))
+  }
+  if (model.state.route == 'editGroup') {
+    // return editGroup(model)(state).fork(onError(state), onSaveSuccess(model))
+  }
+  if (model.state.route == 'editEvent') {
+    // return editEvent(model)(state).fork(onError(state), onSaveSuccess(model))
+  }
   return state
 }
 
@@ -43,7 +81,7 @@ export const Editor = {
     return state
   },
   view: ({ attrs: { model }, state }) => {
-    console.log('Editor', state, model)
+    // console.log('Editor', state, model)
     return m(
       'form.form',
       {

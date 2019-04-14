@@ -25,6 +25,10 @@ const actionsAt = {
   login: () => ['LOGIN PAGE'],
   events: (model) => [
     m(Btn, {
+      route: `/${model.user.username}/groups`,
+      label: 'Back to Groups',
+    }),
+    m(Btn, {
       route: `/${model.user.username}/${makeRoute(
         model.state.group.name
       )}/new-event`,

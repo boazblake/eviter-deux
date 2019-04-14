@@ -1,6 +1,6 @@
 import Task from 'data.task'
 
-import TOKEN from './.secret.js'
+import TOKEN from './secrets.js'
 
 const url = 'https://api.graph.cool/simple/v1/cj5u4etx4bw5t01228cbd6pw9'
 
@@ -65,6 +65,14 @@ export const findAllInvites = (model) => {
   return postQl(model)({ query })
 }
 
+export const findGroupInvites = (model) => {
+  let query = `query{allInvitations(filter:{groups_some:{id:${JSON.stringify(
+    model.state.group.id
+  )}}}){id}}`
+
+  return postQl(model)({ query })
+}
+
 export const getGroup = (model) => (id) => {
   let query = `query{Group(id:${JSON.stringify(id)}){id, name, members {id}}}`
 
@@ -79,28 +87,38 @@ export const createGroup = (model) => ({ data: { name } }) => {
   return postQl(model)({ query })
 }
 
-// export const joinGroup = (model) => ({ data: { name } }) => {
-//   console.log(name)
+export const createEvent = (model) => ({
+  data: { title, description, location, date },
+}) => {
+  let query = `mutation{createEvent(hostedById:${JSON.stringify(
+    model.user.id
+  )},title:${JSON.stringify(title)},description:${JSON.stringify(
+    description
+  )},location:${JSON.stringify(location)},date:${JSON.stringify(date)}){id}}`
 
-//   let query = `mutation{createGroup(name:${JSON.stringify(
-//     name
-//   )}, members:[${JSON.stringify(model.user.id)}]){id, name, members{id}}}`
+  return postQl(model)({ query })
+}
 
-//   return postQl(model)({ query })
-// }
+export const joinEvent = (model) => ({ createEvent: { id } }) => {
+  let query = `mutation{createInvitation(userId:${JSON.stringify(
+    model.user.id
+  )},eventId:${JSON.stringify(id)},partySize:1,response:Yes){id}}`
+
+  return postQl(model)({ query })
+}
 
 export const getInvite = (model) => (id) => {
-  let query = `query{Invite(id:${JSON.stringify(
+  let query = `query{Invitation(id:${JSON.stringify(
     id
-  )}){id,partySize,response,event{id, date, title, hostedBy{email} invitations{partySize, response}}}}`
+  )}){id,partySize,response,event{id, date, title, hostedBy{email} invites{partySize, response}}}}`
 
   return postQl(model)({ query })
 }
 
 export const updateInviteWithResponse = (model) => (key) => (rsvp) => {
-  let query = `mutation{updateInvite(id:${JSON.stringify(
+  let query = `mutation{updateInvitation(id:${JSON.stringify(
     key
-  )},response:${rsvp}){id,partySize,response,event{id,date,title,hostedBy{email}invitations{partySize, response}}}}`
+  )},response:${rsvp}){id,partySize,response,event{id,date,title,hostedBy{email}, invites{partySize, response}}}}`
 
   return postQl(model)({ query })
 }
@@ -120,7 +138,7 @@ export const updateInviteWithResponse = (model) => (key) => (rsvp) => {
 
 //create Invite
 // mutation {
-// createInvite(
+// createInvitation(
 //   userId: "cjue72u6q007t01390uzladz5",
 //   eventId: "cjueplkft04hn0101usyxubaz",
 //   partySize: 1,
