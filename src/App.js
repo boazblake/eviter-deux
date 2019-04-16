@@ -5,22 +5,36 @@ import { Login, Register } from './Login/component'
 import { Groups } from './Groups/component'
 import { Invites } from './Invites/component'
 import { Editor } from './Editor/component'
-import auth0 from 'auth0-js'
+import Auth0Lock from 'auth0-lock'
 
 import Task from 'data.task'
 import { checkAuth } from './auth.js'
 
-const authenticateUSer = (model) => {
-  var webAuth = new auth0.WebAuth({
-    domain: 'boazblake.auth0.com',
-    clientID: 'wly12TyM6CBy5rA90BfNTbh14dgN9KyZ',
-    responseType: 'token id_token',
-    scope: 'openid',
-    redirectUri: 'http://localhost:3000/#!/landing',
+const authUser = (model) => {
+  const lock = new Auth0Lock(
+    'wly12TyM6CBy5rA90BfNTbh14dgN9KyZ',
+    'boazblake.auth0.com',
+    {
+      auth: {
+        params: { scope: 'openid email' }, //Details: https://auth0.com/docs/scopes
+      },
+      rememberLastLogin: true,
+    }
+  )
+
+  lock.on('authenticated', function(authResult) {
+    lock.getProfile(authResult.idToken, function(error, profile) {
+      if (error) {
+        alert('Unable to authenticate!')
+        return
+      }
+      localStorage.setItem('id_token', authResult.idToken)
+
+      return console.log(localStorage, profile, authResult)
+    })
   })
 
-  console.log(webAuth)
-  webAuth.authorize()
+  lock.show()
 }
 
 const Landing = {
@@ -30,7 +44,7 @@ const Landing = {
       m(
         'button.card-btn',
         {
-          onclick: () => authenticateUSer(model), //.fork(onAuthError(model), onAuthSuccess(model)),
+          onclick: () => authUser(model), //.fork(onAuthError(model), onAuthSuccess(model)),
         },
         'LOG IN WITH GITHUB'
       )
@@ -133,7 +147,7 @@ export const App = (model) => ({
   '/home': {
     onmatch: (args, path) => {
       model.state.route = 'home'
-      return console.log('landed home', args, path)
+      return console.log('landed home', args, path, model)
     },
     render: () => m(Layout, { model }, m(LandingPage, { model })),
   },

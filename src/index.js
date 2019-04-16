@@ -52,8 +52,10 @@ if ('serviceWorker' in navigator) {
 
 checkWidth()
 
-// if (checkAuth(model)) {
-m.route(root, '/home', App(model))
-// } else {
-// m.route(root, '/landing', UnAuthenticated(model))
-// }
+if (/access_token|id_token|error/.test(window.location.hash)) {
+  model.state.token = window.location.hash
+  m.route(root, '/home', App(model))
+} else {
+  console.log('window', window.location.hash)
+  m.route(root, '/landing', UnAuthenticated(model))
+}
