@@ -22,7 +22,8 @@ const actionsAt = {
       label: 'Add Group',
     }),
   ],
-  login: () => ['LOGIN PAGE'],
+  landing: () => ['LANDING PAGE'],
+  home: () => ['LANDING PAGE'],
   events: (model) => [
     m(Btn, {
       route: `/${model.user.username}/groups`,
@@ -35,7 +36,6 @@ const actionsAt = {
       label: 'Add Event',
     }),
   ],
-  register: () => ['REGISTER PAGE'],
   newGroup: (model) => [
     m(Btn, {
       route: `/${model.user.username}/groups`,

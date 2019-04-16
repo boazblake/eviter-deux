@@ -1,8 +1,8 @@
 import m from 'mithril'
 const root = document.body
 import { model } from './Model.js'
-
-import { App } from './App.js'
+import { checkAuth } from './auth.js'
+import { App, UnAuthenticated } from './App.js'
 
 if (module.hot) {
   module.hot.accept()
@@ -52,4 +52,8 @@ if ('serviceWorker' in navigator) {
 
 checkWidth()
 
-m.route(root, '/login', App(model))
+// if (checkAuth(model)) {
+m.route(root, '/home', App(model))
+// } else {
+// m.route(root, '/landing', UnAuthenticated(model))
+// }

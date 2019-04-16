@@ -1,0 +1,25 @@
+{
+  "icons": [
+    {
+      "src": "assets/icons/icon_32x32.107b550d37a79f7fe7e4682edd590e75.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "assets/icons/icon_16x16.107b550d37a79f7fe7e4682edd590e75.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "name": "Shindigit Your Ultimate Event Planner",
+  "short_name": "Shindigit",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": ".",
+  "lang": "en-US",
+  "description": "Shindigit Your Ultimate Event Planner!",
+  "background_color": "#01579b",
+  "theme_color": "#01579b",
+  "theme-color": "#01579b",
+  "scope": "/"
+}

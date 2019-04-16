@@ -1,0 +1,13 @@
+endpoint: https://us1.prisma.sh/boaz-blake-8951e1/shindigit/dev
+datamodel: datamodel.prisma
+secret: ${env:PRISMA_MANAGEMENT_API_SECRET}
+
+generate:
+  - generator: javascript-client
+    output: ./src/generated/prisma-client/
+
+hooks:
+  post-deploy:
+    - echo "deploy finished"
+    - prisma generate
+    - echo "generate finished"

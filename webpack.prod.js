@@ -1,6 +1,7 @@
 const merge = require('webpack-merge')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+// const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 const common = require('./webpack.common.js')
@@ -19,6 +20,9 @@ module.exports = merge(common, {
               options: { sourceMap: true },
             },
             {
+              loader: 'postcss-loader',
+            },
+            {
               loader: 'sass-loader',
               options: { sourceMap: true },
             },
@@ -28,7 +32,7 @@ module.exports = merge(common, {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin([ 'docs' ]),
+    new CleanWebpackPlugin(['docs']),
     new ExtractTextPlugin({
       filename: (getPath) => getPath('css/[name]-[hash].css'),
       allChunks: true,
@@ -36,7 +40,7 @@ module.exports = merge(common, {
   ],
   optimization: {
     minimizer: [
-      new UglifyJSPlugin({
+      new TerserPlugin({
         cache: true,
         parallel: true,
         sourceMap: true,

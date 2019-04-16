@@ -1,0 +1,14 @@
+projects:
+  app:
+    schemaPath: "src/schema.graphql"
+    extensions:
+      endpoints:
+        default: "http://localhost:4000"
+  db:
+    extensions:
+      endpoints:
+        default: https://us1.prisma.sh/boaz-blake-8951e1/shindigit/dev
+      prisma: prisma.yml
+      prepare-binding:
+        output: src/generated/prisma.ts
+        generator: prisma-ts

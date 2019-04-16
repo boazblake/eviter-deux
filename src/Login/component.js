@@ -32,19 +32,26 @@ const registerUser = (model) => (data) =>
   registerReq(model)(data).fork(onE(model), userRegistered(model))
 
 const Login = {
-  view: ({ attrs, state }) =>
+  view: ({ attrs: { model }, state }) =>
     m(
       'form.form',
       {
         onsubmit: (e) => {
-          attrs.model.errors = null
+          model.errors = null
           e.preventDefault()
-          validateData(state) ? logUserIn(attrs.model)(state) : ''
+          validateData(state) ? logUserIn(model)(state) : ''
         },
       },
       [
         m('fieldset.fieldset', [
           m('legend', 'Login'),
+          m(
+            'button.card-btn',
+            {
+              id: 'btn-login',
+            },
+            'LOGIN'
+          ),
           m('.fields', [
             m('label', { for: 'email' }, 'email'),
             m('input', {
@@ -64,11 +71,11 @@ const Login = {
           m(
             'button[type=submit]',
             {
-              class: attrs.model.state.isLoading ? 'submitting' : 'submit',
+              class: model.state.isLoading ? 'submitting' : 'submit',
             },
-            attrs.model.state.isLoading ? 'Submitting' : 'Submit'
+            model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          attrs.model.errors ? m('p.error', attrs.model.errors[0]) : '',
+          model.errors ? m('p.error', model.errors[0]) : '',
         ]),
         m(
           'a',
@@ -83,14 +90,14 @@ const Login = {
 }
 
 const Register = {
-  view: ({ attrs, state }) =>
+  view: ({ attrs: { model }, state }) =>
     m(
       'form.form',
       {
         onsubmit: (e) => {
-          attrs.model.errors = null
+          model.errors = null
           e.preventDefault()
-          validateData(state) ? registerUser(attrs.model)(state) : ''
+          validateData(state) ? registerUser(model)(state) : ''
         },
       },
       [
@@ -121,10 +128,10 @@ const Register = {
           ]),
           m(
             'button[type=submit]',
-            { class: attrs.model.state.isLoading ? 'submitting' : 'submit' },
-            attrs.model.state.isLoading ? 'Submitting' : 'Submit'
+            { class: model.state.isLoading ? 'submitting' : 'submit' },
+            model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          attrs.model.errors ? m('p.error', attrs.model.errors[0]) : '',
+          model.errors ? m('p.error', model.errors[0]) : '',
         ]),
         m(
           'a',

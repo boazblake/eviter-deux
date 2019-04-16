@@ -10,14 +10,17 @@ const PurgecssPlugin = require('purgecss-webpack-plugin')
 const glob = require('glob')
 
 module.exports = {
+  node: {
+    fs: 'empty',
+  },
   context: resolve(__dirname, 'src'),
   entry: {
     main: './index.js',
   },
   output: {
     path: resolve(__dirname, 'docs'),
-    filename: '[name]-bundle.js',
-    chunkFilename: '[name]-chunk.js',
+    filename: '[name]-[hash]-bundle.js',
+    chunkFilename: '[name]-[hash]-chunk.js',
   },
   module: {
     rules: [

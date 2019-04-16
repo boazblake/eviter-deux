@@ -1,10 +1,13 @@
 import Task from 'data.task'
+import bcryptjs from 'bcryptjs'
+import {
+  TOKEN,
+  url,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+} from './secrets.js'
 
-import TOKEN from './secrets.js'
-
-const url = 'https://api.graph.cool/simple/v1/cj5u4etx4bw5t01228cbd6pw9'
-
-const BearerToken = `shindigit ${TOKEN}`
+const BearerToken = `Bearer ${TOKEN}`
 
 const makeQuery = (string) => JSON.parse(JSON.stringify(string))
 
@@ -31,20 +34,47 @@ export const postQl = (model) => (query) => {
   )
 }
 
+export const getGitHubToken = (model) => (str) => {
+  model.state.isLoading = true
+  return new Task((rej, res) =>
+    m
+      .request({
+        method: 'POST',
+        url: url,
+        withCredentials: false,
+        data: JSON.stringify({
+          client_id: GITHUB_CLIENT_ID,
+          client_secret: GITHUB_CLIENT_SECRET,
+          code: str,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      })
+      .then(parseResponse(model))
+      .then(res, rej)
+  )
+}
+
 export const loginReq = (model) => ({ email, password }) => {
-  let query = `mutation {signinUser(email:{email:${JSON.stringify(
+  let query = `
+  mutation{signinUser(email:{email:${JSON.stringify(
     email
-  )},password:${JSON.stringify(password)}}){user {id, username}}}`
+  )},password:${JSON.stringify(password)}}){user{id,username}}}
+  `
 
   return postQl(model)({ query })
 }
 
 export const registerReq = (model) => ({ email, password, username }) => {
-  let query = `mutation{createUser(authProvider:{email:{email:${JSON.stringify(
-    email
-  )},password:${JSON.stringify(password)},username:${JSON.stringify(
-    username
-  )}){id, username}}`
+  let salt = bcryptjs.genSaltSync(10)
+  let passwordHash = bcryptjs.hash(password, salt)
+
+  let query = `mutation CreateUserMutation($email:String!,$passwordHash:String!) {
+  createUser(email:${JSON.stringify(email)},password:${JSON.stringify(
+  passwordHash
+)},username:${JSON.stringify(username)}){id,username}}`
 
   return postQl(model)({ query })
 }

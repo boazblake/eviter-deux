@@ -1,0 +1,103 @@
+# projectId: cj5u4etx4bw5t01228cbd6pw9
+# version: 44
+
+type AuthenticateUserPayload {
+  token: String!
+}
+
+extend type Mutation {
+  authenticateUser(email: String!, password: String!): AuthenticateUserPayload
+}
+
+type LoggedInUserPayload {
+  # if `id` is `null`, it means there is not logged in user
+  id: ID! @unique
+}
+
+extend type Query {
+  loggedInUser: LoggedInUserPayload!
+}
+
+type SignupUserPayload {
+  id: ID! @unique
+  token: String!
+}
+
+extend type Mutation {
+  signupUser(
+    email: String!
+    password: String!
+    username: String!
+  ): SignupUserPayload
+}
+
+enum RSVP {
+  Yes
+  No
+  Maybe
+}
+
+type File @model {
+  contentType: String!
+  createdAt: DateTime!
+  id: ID! @unique
+  name: String!
+  secret: String! @unique
+  size: Int!
+  updatedAt: DateTime!
+  url: String! @unique
+}
+
+type User @model {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  items: [Item!]! @relation(name: "ItemOnUser")
+  email: String @unique
+  username: String!
+  hosting: [Event!]! @relation(name: "UserOnEvent")
+  password: String
+  groups: [Group!]! @relation(name: "WorldOnUser")
+  invites: [Invite!]! @relation(name: "InviteOnUser")
+}
+
+type Invite @model {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  partySize: Int!
+  response: RSVP!
+  event: Event @relation(name: "InviteOnEvent")
+  user: User @relation(name: "InviteOnUser")
+}
+
+type Event @model {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  location: String!
+  date: DateTime!
+  title: String!
+  description: String!
+  invites: [Invite!]! @relation(name: "InviteOnEvent")
+  items: [Item!]! @relation(name: "EventOnItem")
+  hostedBy: User! @relation(name: "UserOnEvent")
+}
+
+type Item @model {
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  quantity: Int!
+  name: String!
+  bringer: User @relation(name: "ItemOnUser")
+  event: Event @relation(name: "EventOnItem")
+}
+
+type Group @model {
+  id: ID! @unique
+  name: String! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  members: [User!]! @relation(name: "WorldOnUser")
+}

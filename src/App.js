@@ -5,8 +5,41 @@ import { Login, Register } from './Login/component'
 import { Groups } from './Groups/component'
 import { Invites } from './Invites/component'
 import { Editor } from './Editor/component'
+import auth0 from 'auth0-js'
 
+import Task from 'data.task'
 import { checkAuth } from './auth.js'
+
+const authenticateUSer = (model) => {
+  var webAuth = new auth0.WebAuth({
+    domain: 'boazblake.auth0.com',
+    clientID: 'wly12TyM6CBy5rA90BfNTbh14dgN9KyZ',
+    responseType: 'token id_token',
+    scope: 'openid',
+    redirectUri: 'http://localhost:3000/#!/landing',
+  })
+
+  console.log(webAuth)
+  webAuth.authorize()
+}
+
+const Landing = {
+  view: ({ attrs: { model } }) =>
+    m(
+      '.container',
+      m(
+        'button.card-btn',
+        {
+          onclick: () => authenticateUSer(model), //.fork(onAuthError(model), onAuthSuccess(model)),
+        },
+        'LOG IN WITH GITHUB'
+      )
+    ),
+}
+
+const LandingPage = {
+  view: ({ attrs: { model } }) => m('.component', m(Landing, { model })),
+}
 
 const LoginPage = {
   view: ({ attrs: { model } }) => m('.component', m(Login, { model })),
@@ -30,14 +63,6 @@ const EditorPage = {
 }
 
 export const App = (model) => ({
-  '/login': {
-    onmatch: () => (model.state.route = 'login'),
-    render: () => m(Layout, { model }, m(LoginPage, { model })),
-  },
-  '/register': {
-    onmatch: () => (model.state.route = 'register'),
-    render: () => m(Layout, { model }, m(RegisterPage, { model })),
-  },
   '/:username/groups': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)
@@ -104,5 +129,21 @@ export const App = (model) => ({
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(Login, { model })),
+  },
+  '/home': {
+    onmatch: (args, path) => {
+      model.state.route = 'home'
+      return console.log('landed home', args, path)
+    },
+    render: () => m(Layout, { model }, m(LandingPage, { model })),
+  },
+})
+
+export const UnAuthenticated = (model) => ({
+  '/landing': {
+    onmatch: () => {
+      model.state.route = 'landing'
+    },
+    render: () => m(Layout, { model }, m(LandingPage, { model })),
   },
 })
