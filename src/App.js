@@ -18,6 +18,7 @@ const authUser = (model) => {
       auth: {
         params: { scope: 'openid email' }, //Details: https://auth0.com/docs/scopes
       },
+      responseType: 'id_token',
       rememberLastLogin: true,
     }
   )

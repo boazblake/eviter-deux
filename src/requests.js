@@ -1,13 +1,6 @@
 import Task from 'data.task'
 import bcryptjs from 'bcryptjs'
-import {
-  TOKEN,
-  url,
-  GITHUB_CLIENT_ID,
-  GITHUB_CLIENT_SECRET,
-} from './secrets.js'
-
-const BearerToken = `Bearer ${TOKEN}`
+import { restDbUrl, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from './secrets.js'
 
 const makeQuery = (string) => JSON.parse(JSON.stringify(string))
 
@@ -22,11 +15,14 @@ export const postQl = (model) => (query) => {
     m
       .request({
         method: 'POST',
-        url: url,
+        url: restDbUrl,
         withCredentials: false,
         data: makeQuery(query),
         headers: {
-          Authorization: BearerToken,
+          Authorization: `Bearer ${model.state.token}`,
+          'cache-control': 'no-cache',
+          'x-apikey': '64fecd3f0cbb54d46d7f7260b86b8ad45d31b',
+          'content-type': 'application/json',
         },
       })
       .then(parseResponse(model))

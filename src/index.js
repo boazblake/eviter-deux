@@ -3,6 +3,7 @@ const root = document.body
 import { model } from './Model.js'
 import { checkAuth } from './auth.js'
 import { App, UnAuthenticated } from './App.js'
+import Auth0Lock from 'auth0-lock'
 
 if (module.hot) {
   module.hot.accept()
@@ -53,7 +54,18 @@ if ('serviceWorker' in navigator) {
 checkWidth()
 
 if (/access_token|id_token|error/.test(window.location.hash)) {
-  model.state.token = window.location.hash
+  let authRes = window.location.hash.split('#')[1].split('&')
+  authRes.map((res) => {
+    let key = res.split('=')[0]
+    let value = res.split('=')[1]
+    if (key == 'access_token') {
+      model.state.accesstoken = value
+      model.state.token = window.location.hash
+    }
+    console.log([key, value])
+    return [key, value]
+  })
+
   m.route(root, '/home', App(model))
 } else {
   console.log('window', window.location.hash)
