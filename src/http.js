@@ -11,8 +11,8 @@ const parseQLResponse = (model) => ({ data, errors }) => {
 export const parseHttpError = (rej) => (Error) => rej(Error.response)
 
 const getUserToken = () =>
-  window.localStorage.getItem('user-token')
-    ? window.localStorage.getItem('user-token')
+  window.sessionStorage.getItem('user-token')
+    ? window.sessionStorage.getItem('user-token')
     : ''
 
 const postQl = (model) => (query) => {

@@ -1,8 +1,11 @@
 const root = document.body
 import m from 'mithril'
 import { model } from './Model.js'
+import { checkAuth } from './auth.js'
+import { App } from './App.js'
 import Layout from './components/Layout.js'
 import { Login, Register } from './Login/component'
+import { makeRoute } from './utils/index.js'
 
 const LoginPage = {
   view: ({ attrs: { model } }) => m('.component', m(Login, { model })),
@@ -59,6 +62,10 @@ if ('serviceWorker' in navigator) {
 }
 
 checkWidth()
+
+if (checkAuth(model)) {
+  m.route(document.body, `/${makeRoute(model.user.name)}/groups`, App(model))
+}
 
 const UnAuthenticated = (model) => ({
   '/login': {

@@ -7,6 +7,11 @@ export const makeRoute = compose(
   toLower()
 )
 
+export const log = (m) => (v) => {
+  console.log(m, v)
+  return v
+}
+
 // function scrollToAnchor(anchorName) {
 //   let is = (el) => {
 //     return el !== undefined && el !== null

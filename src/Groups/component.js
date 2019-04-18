@@ -3,7 +3,7 @@ import { Group } from './Group/component.js'
 import Modal from '../components/Modal.js'
 import { BtnClose } from '../components/Btns.js'
 import { Editor } from '../Editor/component.js'
-import http from '../http.js'
+import { findGroups } from './model.js'
 
 const toggleModal = (state) => {
   state.showModal = !state.showModal
@@ -13,11 +13,6 @@ const onInitError = (state) => (errors) => (state.errors = errors)
 const onInitSuccess = (state) => (groups) => {
   state.groups = groups
 }
-
-const findGroups = (id) =>
-  http.getTask(
-    `data/Groups?where%20%3D%20members.objectId%20%3D%20${id}&loadRelations=members`
-  )
 
 export const Groups = {
   showModal: false,

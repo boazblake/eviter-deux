@@ -7,11 +7,13 @@ import {
   registerUser,
 } from './model.js'
 
+import { makeRoute } from '../utils/index.js'
+
 const onSuccess = (state) => (model) => (user) => {
-  window.localStorage.setItem('user-token', user['user-token'])
+  window.sessionStorage.setItem('user-token', user['user-token'])
   model.user = user
   state.errors = null
-  authenticated(model)(`/${model.user.name}/groups`)
+  authenticated(model)(`/${makeRoute(model.user.name)}/groups`)
 }
 
 const onError = (state) => ({ message }) => {
@@ -24,7 +26,9 @@ const logUserIn = (model) => (state) =>
   loginUser(state).fork(onError(state), onSuccess(state)(model))
 
 const regUser = (model) => (dto) =>
-  registerUser(dto).fork(onError(dto), onSuccess(dto)(model))
+  registerUser(dto)
+    .chain((_) => loginUser(dto))
+    .fork(onError(dto), onSuccess(dto)(model))
 
 const Login = {
   view: ({ attrs: { model }, state }) =>
@@ -119,7 +123,7 @@ const Register = {
             { class: model.state.isLoading ? 'submitting' : 'submit' },
             model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          state.errors ? m('p.error', state.errors.message) : '',
+          state.errors ? m('p.error', state.errors) : '',
         ]),
         m(
           'a',

@@ -13,7 +13,7 @@ const state = {
   event: { id: '', name: '' },
 }
 
-const user = { id: '', username: '' }
+const user = { objectId: '', name: '' }
 
 const errors = null
 
