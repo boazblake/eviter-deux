@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { getInvite, updateInviteWithResponse } from '../../requests.js'
+import http from '../../http.js'
 import { format } from 'date-fns'
 
 const updateInviteResponse = (model) => (key) => (rsvp) =>

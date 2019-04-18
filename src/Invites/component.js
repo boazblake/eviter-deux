@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { findGroupInvites } from '../requests.js'
+import http from '../http.js'
 
 import { Invite } from './Invite/component.js'
 
@@ -16,7 +16,7 @@ export const Invites = {
   oninit: ({ attrs: { model }, state }) => {
     state.invites = []
     state.errors = {}
-    findGroupInvites(model).fork(onLoadError(state), onLoadSuccess(state))
+    // findGroupInvites(model).fork(onLoadError(state), onLoadSuccess(state))
   },
   view: ({ attrs: { model }, state }) => {
     console.log('state', state)

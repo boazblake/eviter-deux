@@ -2,7 +2,7 @@ import m from 'mithril'
 import Header from './Header.js'
 import Footer from './Footer.js'
 import Sidebar from './NavBar.js'
-import Modal from './Modal.js'
+import Menu from './Menu.js'
 import Body from './Body.js'
 
 const Layout = ({ attrs: { model } }) => {
@@ -18,7 +18,7 @@ const Layout = ({ attrs: { model } }) => {
             m(Header, { model }),
             model.state.profile == 'phone'
               ? model.state.tabsShowing
-                ? m(Modal, m(Sidebar, { model }))
+                ? m(Menu, m(Sidebar, { model }))
                 : null
               : m(Sidebar, { model }),
             m(Body, { model, children }),

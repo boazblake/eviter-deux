@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { getGroup } from '../../requests.js'
+import http from '../../http.js'
 import { makeRoute } from '../../utils/index.js'
 
 const oninitError = (state) => (errors) => (state.errors = errors)
@@ -12,8 +12,8 @@ const oninitSuccess = (model) => (state) => ({ Group }) => {
 }
 
 export const Group = {
+  group: {},
   oninit: ({ attrs: { model, key }, state }) => {
-    state.group = {}
     getGroup(model)(key).fork(oninitError(state), oninitSuccess(model)(state))
   },
   view: ({ attrs: { model }, state }) => {

@@ -1,35 +1,25 @@
 import m from 'mithril'
-import { loginReq, registerReq } from '../requests.js'
-import { pluck, or, isNil, not } from 'ramda'
 
-const validateData = ({ email, password }) =>
-  not(or(isNil(email), isNil(password)))
+import {
+  validateData,
+  authenticated,
+  loginUser,
+  registerUser,
+} from './model.js'
 
-const userLoggedIn = (model) => ({
-  signinUser: {
-    user: { id, username },
-  },
-}) => {
-  model.user.id = id
-  model.user.username = username
+const onSuccess = (model) => (user) => {
+  model.user = user
   model.errors = null
-  m.route.set(`/${model.user.username}/groups/`)
+  authenticated(model)(`/${model.user.name}/groups`)
 }
 
-const userRegistered = (model) => ({ createUser: { id, username } }) => {
-  model.user.id = id
-  model.user.username = username
-  model.errors = null
-  m.route.set(`/${model.user.username}/groups/`)
-}
+const onError = (model) => (errors) => (model.errors = errors)
 
-const onE = (model) => (errors) => (model.errors = pluck('message', errors))
+const logUserIn = (model) => (dto) =>
+  loginUser(dto).fork(onError(model), onSuccess(model))
 
-const logUserIn = (model) => (data) =>
-  loginReq(model)(data).fork(onE(model), userLoggedIn(model))
-
-const registerUser = (model) => (data) =>
-  registerReq(model)(data).fork(onE(model), userRegistered(model))
+const regUser = (model) => (dto) =>
+  registerUser(dto).fork(onError(model), onSuccess(model))
 
 const Login = {
   view: ({ attrs: { model }, state }) =>
@@ -39,19 +29,17 @@ const Login = {
         onsubmit: (e) => {
           model.errors = null
           e.preventDefault()
-          validateData(state) ? logUserIn(model)(state) : ''
+          validateData(state)
+            ? logUserIn(model)({
+              login: state.email,
+              password: state.password,
+            })
+            : ''
         },
       },
       [
         m('fieldset.fieldset', [
           m('legend', 'Login'),
-          m(
-            'button.card-btn',
-            {
-              id: 'btn-login',
-            },
-            'LOGIN'
-          ),
           m('.fields', [
             m('label', { for: 'email' }, 'email'),
             m('input', {
@@ -75,7 +63,7 @@ const Login = {
             },
             model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          model.errors ? m('p.error', model.errors[0]) : '',
+          model.errors ? m('p.error', model.errors.message) : '',
         ]),
         m(
           'a',
@@ -97,7 +85,7 @@ const Register = {
         onsubmit: (e) => {
           model.errors = null
           e.preventDefault()
-          validateData(state) ? registerUser(model)(state) : ''
+          validateData(state) ? regUser(model)(state) : ''
         },
       },
       [
@@ -111,12 +99,12 @@ const Register = {
               name: 'register',
               onchange: (e) => (state.email = e.target.value),
             }),
-            m('label', { for: 'username' }, 'username'),
+            m('label', { for: 'name' }, 'name'),
             m('input', {
               type: 'text',
-              id: 'username',
+              id: 'name',
               name: 'register',
-              onchange: (e) => (state.username = e.target.value),
+              onchange: (e) => (state.name = e.target.value),
             }),
             m('label', { for: 'password' }, 'Password'),
             m('input', {
@@ -131,7 +119,7 @@ const Register = {
             { class: model.state.isLoading ? 'submitting' : 'submit' },
             model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          model.errors ? m('p.error', model.errors[0]) : '',
+          model.errors ? m('p.error', model.errors.message) : '',
         ]),
         m(
           'a',

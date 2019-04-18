@@ -1,17 +1,10 @@
 import m from 'mithril'
 
 import { groupForm, eventForm } from './forms/index.js'
-import {
-  getGroup,
-  createGroup,
-  createEvent,
-  editGroup,
-  editEvent,
-  joinEvent,
-} from '../requests.js'
+import http from '../http.js'
 import { makeRoute } from '../utils/index.js'
 
-const getGroupData = (model) => (id) => getGroup(model)(id)
+const getGroupData = (id) => http.getTask(`/data/Groups/${id}`)
 const onInitSuccess = (state) => (data) => (state.data = data)
 
 const onError = (state) => (error) => {
@@ -45,13 +38,13 @@ const onSaveEventSuccess = (model) => (data) => {
 
 const saveForm = (model) => (state) => {
   console.log('save form', model.state, model.user, state)
-  if (model.state.route == 'newGroup') {
+  if (model.state.route == 'groups') {
     return createGroup(model)(state).fork(
       onError(state),
       onSaveGroupSuccess(model)
     )
   }
-  if (model.state.route == 'newEvent') {
+  if (model.state.route == 'events') {
     return createEvent(model)(state)
       .chain(joinEvent(model))
       .fork(onError(state), onSaveEventSuccess(model))
@@ -74,6 +67,7 @@ export const Editor = {
   oninit: ({ attrs: { model, page, id }, state }) => {
     state.form = getForm[page]
     state.data = {}
+    console.log('page', page, state)
     state.userId = model.user.id
     if (id) {
       getGroupData(model)(id).fork(onError(state), onInitSuccess(state))

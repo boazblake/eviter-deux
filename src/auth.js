@@ -6,10 +6,11 @@ const secure = (str) => bcrypt.hash(str, 10)
 const checkAuth = (model) => {
   console.warn(
     'checking Auth',
-    { id: model.user.id },
-    not(isEmpty(model.user.id))
+    model,
+    { id: model.user.objectId },
+    not(isEmpty(model.user.objectId))
   )
-  return not(isEmpty(model.user.id))
+  return not(isEmpty(model.user.objectId))
 }
 
 export { secure, checkAuth }

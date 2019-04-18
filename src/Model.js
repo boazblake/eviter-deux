@@ -1,3 +1,6 @@
+import EM from 'eventemitter3'
+const emitter = new EM()
+
 const pages = ['login', 'logout', 'createEvent', '']
 
 const state = {
@@ -19,6 +22,7 @@ const showModal = (model) =>
   (model.state.modalShowing = !model.state.modalShowing)
 
 export const model = {
+  emitter,
   pages,
   user,
   state,

@@ -1,9 +1,16 @@
-import m from 'mithril'
 const root = document.body
+import m from 'mithril'
 import { model } from './Model.js'
-import { checkAuth } from './auth.js'
-import { App, UnAuthenticated } from './App.js'
-import Auth0Lock from 'auth0-lock'
+import Layout from './components/Layout.js'
+import { Login, Register } from './Login/component'
+
+const LoginPage = {
+  view: ({ attrs: { model } }) => m('.component', m(Login, { model })),
+}
+
+const RegisterPage = {
+  view: ({ attrs: { model } }) => m('.component', m(Register, { model })),
+}
 
 if (module.hot) {
   module.hot.accept()
@@ -53,21 +60,19 @@ if ('serviceWorker' in navigator) {
 
 checkWidth()
 
-if (/access_token|id_token|error/.test(window.location.hash)) {
-  let authRes = window.location.hash.split('#')[1].split('&')
-  authRes.map((res) => {
-    let key = res.split('=')[0]
-    let value = res.split('=')[1]
-    if (key == 'access_token') {
-      model.state.accesstoken = value
-      model.state.token = window.location.hash
-    }
-    console.log([key, value])
-    return [key, value]
-  })
+const UnAuthenticated = (model) => ({
+  '/login': {
+    onmatch: () => {
+      model.state.route = 'login'
+    },
+    render: () => m(Layout, { model }, m(LoginPage, { model })),
+  },
+  '/register': {
+    onmatch: () => {
+      model.state.route = 'register'
+    },
+    render: () => m(Layout, { model }, m(RegisterPage, { model })),
+  },
+})
 
-  m.route(root, '/home', App(model))
-} else {
-  console.log('window', window.location.hash)
-  m.route(root, '/landing', UnAuthenticated(model))
-}
+m.route(root, '/login', UnAuthenticated(model))
