@@ -7,19 +7,24 @@ import {
   registerUser,
 } from './model.js'
 
-const onSuccess = (model) => (user) => {
+const onSuccess = (state) => (model) => (user) => {
+  window.localStorage.setItem('user-token', user['user-token'])
   model.user = user
-  model.errors = null
+  state.errors = null
   authenticated(model)(`/${model.user.name}/groups`)
 }
 
-const onError = (model) => (errors) => (model.errors = errors)
+const onError = (state) => ({ message }) => {
+  state.errors = message
+  console.log(state)
+  return state
+}
 
-const logUserIn = (model) => (dto) =>
-  loginUser(dto).fork(onError(model), onSuccess(model))
+const logUserIn = (model) => (state) =>
+  loginUser(state).fork(onError(state), onSuccess(state)(model))
 
 const regUser = (model) => (dto) =>
-  registerUser(dto).fork(onError(model), onSuccess(model))
+  registerUser(dto).fork(onError(dto), onSuccess(dto)(model))
 
 const Login = {
   view: ({ attrs: { model }, state }) =>
@@ -27,14 +32,9 @@ const Login = {
       'form.form',
       {
         onsubmit: (e) => {
-          model.errors = null
+          state.errors = null
           e.preventDefault()
-          validateData(state)
-            ? logUserIn(model)({
-              login: state.email,
-              password: state.password,
-            })
-            : ''
+          validateData(state) ? logUserIn(model)(state) : ''
         },
       },
       [
@@ -63,7 +63,7 @@ const Login = {
             },
             model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          model.errors ? m('p.error', model.errors.message) : '',
+          state.errors ? m('p.error', state.errors) : '',
         ]),
         m(
           'a',
@@ -83,7 +83,7 @@ const Register = {
       'form.form',
       {
         onsubmit: (e) => {
-          model.errors = null
+          state.errors = null
           e.preventDefault()
           validateData(state) ? regUser(model)(state) : ''
         },
@@ -119,7 +119,7 @@ const Register = {
             { class: model.state.isLoading ? 'submitting' : 'submit' },
             model.state.isLoading ? 'Submitting' : 'Submit'
           ),
-          model.errors ? m('p.error', model.errors.message) : '',
+          state.errors ? m('p.error', state.errors.message) : '',
         ]),
         m(
           'a',

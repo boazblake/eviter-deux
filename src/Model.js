@@ -1,5 +1,5 @@
-import EM from 'eventemitter3'
-const emitter = new EM()
+import AsyncEventEmitter from 'async-eventemitter'
+const emitter = new AsyncEventEmitter()
 
 const pages = ['login', 'logout', 'createEvent', '']
 

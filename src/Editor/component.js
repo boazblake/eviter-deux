@@ -1,53 +1,41 @@
 import m from 'mithril'
 
 import { groupForm, eventForm } from './forms/index.js'
-import http from '../http.js'
-import { makeRoute } from '../utils/index.js'
+import { saveGroup, assocUserToGroup } from './model.js'
 
-const getGroupData = (id) => http.getTask(`/data/Groups/${id}`)
 const onInitSuccess = (state) => (data) => (state.data = data)
 
-const onError = (state) => (error) => {
-  state.error = error
-  console.error('error', state)
+const onError = (state) => ({ message }) => {
+  state.error = message
+  console.error('error', state.error)
 }
 
 const validateData = (data) => {
-  // console.log('valiudate data', data)
   return data
 }
 
-const onSaveGroupSuccess = (model) => (data) => {
+const onSaveGroupSuccess = (state) => (model) => (data) => {
+  state.error = null
   console.log('saved', model, data)
-  m.route.set(`/${model.user.username}/groups`)
+  return model.emitter.emit('toggle-group', model.emitter.emit('fetch-groups'))
 }
 
-const onSaveEventSuccess = (model) => (data) => {
-  console.log(
-    'saved',
-    model,
-    data,
-    'route',
-    `/${model.user.username}/${makeRoute(model.state.group.name)}/events`
-  )
-
-  m.route.set(
-    `/${model.user.username}/${makeRoute(model.state.group.name)}/events`
-  )
+const onSaveEventSuccess = (state) => (model) => (data) => {
+  state.error = null
+  console.log('saved', model, data)
 }
 
 const saveForm = (model) => (state) => {
   console.log('save form', model.state, model.user, state)
   if (model.state.route == 'groups') {
-    return createGroup(model)(state).fork(
-      onError(state),
-      onSaveGroupSuccess(model)
-    )
+    return saveGroup(state.data.name)
+      .chain(assocUserToGroup(model.user.objectId))
+      .fork(onError(state), onSaveGroupSuccess(state)(model))
   }
   if (model.state.route == 'events') {
     return createEvent(model)(state)
       .chain(joinEvent(model))
-      .fork(onError(state), onSaveEventSuccess(model))
+      .fork(onError(state), onSaveEventSuccess(state)(model))
   }
   if (model.state.route == 'editGroup') {
     // return editGroup(model)(state).fork(onError(state), onSaveSuccess(model))
@@ -80,12 +68,13 @@ export const Editor = {
       'form.form',
       {
         onsubmit: (e) => {
-          model.errors = null
+          model.error = null
           e.preventDefault()
           validateData(state.data) ? saveForm(model)(state) : ''
         },
       },
       state.form(state),
+      state.error ? m('p.error', state.error) : '',
       m(
         'button[type=submit]',
         {

@@ -11,8 +11,8 @@ const parseQLResponse = (model) => ({ data, errors }) => {
 export const parseHttpError = (rej) => (Error) => rej(Error.response)
 
 const getUserToken = () =>
-  window.sessionStorage.getItem('user-token')
-    ? window.sessionStorage.getItem('user-token')
+  window.localStorage.getItem('user-token')
+    ? window.localStorage.getItem('user-token')
     : ''
 
 const postQl = (model) => (query) => {
@@ -56,7 +56,7 @@ const putTask = (url) => ({ dto }) =>
         method: 'PUT',
         url: `${baseUrl}/${APP_ID}/${API_KEY}/${url}`,
         data: dto,
-        headers: { 'user-token': getUserToken },
+        headers: { 'user-token': getUserToken() },
         withCredentials: false,
       })
       .then(res, parseHttpError(rej))
@@ -68,7 +68,7 @@ const getTask = (url) =>
       .request({
         method: 'GET',
         url: `${baseUrl}/${APP_ID}/${API_KEY}/${url}`,
-        headers: { 'user-token': getUserToken },
+        headers: { 'user-token': getUserToken() },
         withCredentials: false,
       })
       .then(res, parseHttpError(rej))
@@ -80,7 +80,7 @@ const deleteTask = (url) => (id) =>
       .request({
         method: 'DELETE',
         url: `${baseUrl}/${APP_ID}/${API_KEY}/${url}/${id}`,
-        headers: { 'user-token': getUserToken },
+        headers: { 'user-token': getUserToken() },
         withCredentials: false,
       })
       .then(res, parseHttpError(rej))

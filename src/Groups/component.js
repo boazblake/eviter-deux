@@ -1,6 +1,4 @@
 import m from 'mithril'
-import Task from 'data.task'
-import { traverse } from 'ramda'
 import { Group } from './Group/component.js'
 import Modal from '../components/Modal.js'
 import { BtnClose } from '../components/Btns.js'
@@ -10,34 +8,38 @@ import http from '../http.js'
 const toggleModal = (state) => {
   state.showModal = !state.showModal
 }
+const onInitError = (state) => (errors) => (state.errors = errors)
 
-const getGroups = ({
-  state: {
-    user: { groups },
-  },
-}) => {
-  groups.map((g) => traverse(Task.of, http.getTask(`/data/Groups/${g}`)))
+const onInitSuccess = (state) => (groups) => {
+  state.groups = groups
 }
 
-const onInitError = (state) => (errors) => (state.errors = errors)
-const onInitSuccess = (state) => ({ allGroups }) => (state.groups = allGroups)
+const findGroups = (id) =>
+  http.getTask(
+    `data/Groups?where%20%3D%20members.objectId%20%3D%20${id}&loadRelations=members`
+  )
 
 export const Groups = {
-  oncreate: ({ dom, state, attrs: { model } }) => {
-    state.showModal = false
-    model.emitter.on('add-group', () => toggleModal(state), dom)
+  showModal: false,
+  oninit: ({ dom, state, attrs: { model } }) => {
+    model.emitter.on('toggle-group', () => toggleModal(state), dom)
+    model.emitter.on(
+      'fetch-groups',
+      () =>
+        findGroups(model.user.objectId).fork(
+          onInitError(state),
+          onInitSuccess(state)
+        ),
+      dom
+    )
   },
-  oninit: ({ attrs: { model }, state }) => {
-    model.user.groups
-      ? getGroups(model).fork(onInitError(state), onInitSuccess(state))
-      : ''
-  },
+  oncreate: ({ attrs: { model } }) => model.emitter.emit('fetch-groups'),
   view: ({ attrs: { model }, state }) => [
     m(
       '.groups',
       state.groups
-        ? state.groups.map(({ id }) =>
-          m(Group, { model, key: id }, `id: ${id}`)
+        ? state.groups.map((g, id) =>
+          m(Group, { model, g, key: id }, `id: ${id}`)
         )
         : 'add a group'
     ),
@@ -47,7 +49,7 @@ export const Groups = {
         m('.modal-content', [
           m(Editor, { model, page: 'group' }),
           m(BtnClose, {
-            action: () => model.emitter.emit('add-group'),
+            action: () => model.emitter.emit('toggle-group'),
             label: 'Close',
           }),
         ])
@@ -55,5 +57,5 @@ export const Groups = {
       : '',
   ],
   onremove: ({ dom, attrs: { model } }) =>
-    model.emitter.removeListener('add-group', toggleModal, dom),
+    model.emitter.removeListener('toggle-group', toggleModal, dom),
 }

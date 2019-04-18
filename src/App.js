@@ -27,28 +27,19 @@ export const App = (model) => ({
     },
     render: () => m(Layout, { model }, m(GroupsPage, { model })),
   },
-  // '/:username/new-group': {
+  // '/:username/edit/:group': {
   //   onmatch: (args, path) => {
   //     console.log('args, path', args, path)
-  //     model.state.route = 'Event'
+  //     model.state.route = 'editGroup'
   //     checkAuth(model)
   //   },
   //   render: () =>
-  //     m(Layout, { model }, m(EditorPage, { model, page: 'group', id: null })),
+  //     m(
+  //       Layout,
+  //       { model },
+  //       m(EditorPage, { model, page: 'group', id: 'groupId' })
+  //     ),
   // },
-  '/:username/edit/:group': {
-    onmatch: (args, path) => {
-      console.log('args, path', args, path)
-      model.state.route = 'editGroup'
-      checkAuth(model)
-    },
-    render: () =>
-      m(
-        Layout,
-        { model },
-        m(EditorPage, { model, page: 'group', id: 'groupId' })
-      ),
-  },
   '/:username/:group/events': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)

@@ -7,7 +7,7 @@ import { Btn } from './Btns.js'
 const actionsAt = {
   groups: (model) => [
     m(Btn, {
-      action: () => model.emitter.emit('add-group'),
+      action: () => model.emitter.emit('toggle-group'),
       label: 'Add Group',
     }),
   ],
