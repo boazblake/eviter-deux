@@ -23,7 +23,7 @@ const EditorPage = {
 export const App = (model) => ({
   '/:username/groups': {
     onmatch: () => {
-      model.state.route = 'groups'
+      model.state.route('groups')
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(GroupsPage, { model })),
@@ -31,7 +31,7 @@ export const App = (model) => ({
   '/:username/:group/events': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)
-      model.state.route = 'events'
+      model.state.route('events')
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(EventsPage, { model })),
@@ -39,7 +39,7 @@ export const App = (model) => ({
   '/:username/:group/new-event': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)
-      model.state.route = 'newEvent'
+      model.state.route('newEvent')
       checkAuth(model)
     },
     render: () =>
@@ -48,7 +48,7 @@ export const App = (model) => ({
   '/:username/:group/edit/:event': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)
-      model.state.route = 'editEvent'
+      model.state.route('editEvent')
       checkAuth(model)
     },
     render: () =>

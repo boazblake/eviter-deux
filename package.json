@@ -58,6 +58,7 @@
     "json-server-extension": "^1.1.2",
     "jsonwebtoken": "^8.5.1",
     "mithril": "^2.0.0-rc.4",
+    "mithril-stream": "^2.0.0",
     "mitt": "^1.1.3",
     "ramda": "^0.26.0"
   },

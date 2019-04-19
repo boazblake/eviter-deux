@@ -3,20 +3,21 @@ import m from 'mithril'
 import { makeRoute } from '../../utils/index.js'
 import http from '../../http.js'
 
-const deleteGroup = (id) => http.deleteTask('data/groups')(id)
+const deleteGroup = (model) => (id) => http.deleteTask(model)('data/groups')(id)
 
 const onError = (model) => (errors) => {
   console.warn('errors', errors, model)
 }
 
-const onSuccess = (model) => (res) => {
+const onSuccess = (reload) => (res) => {
   console.log('success', res)
-  model.emitter.emit('fetch-groups')
+  reload()
 }
 
 export const Group = {
   view: ({
     attrs: {
+      reload,
       model,
       g: { objectId, name, members },
     },
@@ -26,7 +27,9 @@ export const Group = {
         'button.btn',
         {
           onclick: () =>
-            m.route.set(`/${model.user.name}/${makeRoute(name)}/events`),
+            m.route.set(
+              `/${makeRoute(model.user.name)}/${makeRoute(name)}/events`
+            ),
         },
         m('p.title', name)
       ),
@@ -36,7 +39,7 @@ export const Group = {
           onclick: () => {
             model.state.group.id = objectId
             model.state.group.name = name
-            model.emitter.emit('toggle-group')
+            model.toggleState('groups-modal')
           },
         },
         m('p.title', 'Edit')
@@ -44,7 +47,8 @@ export const Group = {
       m('p.groupSize', members.length),
       m('button.btn-delete', {
         onclick: () => {
-          deleteGroup(objectId).fork(onError(model), onSuccess(model))
+          console.log('reload', reload)
+          deleteGroup(model)(objectId).fork(onError(model), onSuccess(reload))
         },
       }),
     ])

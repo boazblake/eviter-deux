@@ -1,12 +1,13 @@
 import http from '../http.js'
 import { compose } from 'ramda'
 
-const getGroup = (dto) =>
-  http.getTask(`data/Groups?${dto}&loadRelations=members`)
+const getGroup = (model) => (dto) =>
+  http.getTask(model)(`data/Groups?${dto}&loadRelations=members`)
 
 const toDto = (id) => encodeURI(`where=members.objectId = '${id}'`)
 
-export const findGroups = compose(
-  getGroup,
-  toDto
-)
+export const findGroups = (model) =>
+  compose(
+    getGroup(model),
+    toDto
+  )

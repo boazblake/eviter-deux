@@ -5,9 +5,6 @@ import { BtnClose } from '../components/Btns.js'
 import { Editor } from '../Editor/component.js'
 import { findGroups } from './model.js'
 
-const toggleModal = (state) => {
-  state.showModal = !state.showModal
-}
 const onInitError = (state) => (errors) => (state.errors = errors)
 
 const onInitSuccess = (state) => (groups) => {
@@ -15,38 +12,46 @@ const onInitSuccess = (state) => (groups) => {
 }
 
 export const Groups = {
-  showModal: false,
-  oninit: ({ dom, state, attrs: { model } }) => {
-    model.emitter.on('toggle-group', () => toggleModal(state), dom)
-    model.emitter.on(
-      'fetch-groups',
-      () =>
-        findGroups(model.user.objectId).fork(
-          onInitError(state),
-          onInitSuccess(state)
-        ),
-      dom
-    )
+  oninit: ({ state, attrs: { model } }) => {
+    model.state.reload = () =>
+      findGroups(model)(model.user.objectId).fork(
+        onInitError(state),
+        onInitSuccess(state)
+      )
   },
-  oncreate: ({ attrs: { model } }) => model.emitter.emit('fetch-groups'),
+  oncreate: ({ attrs: { model } }) => model.state.reload(),
   view: ({ attrs: { model }, state }) => [
     m(
       '.groups',
       state.groups
         ? state.groups.map((g, id) =>
-          m(Group, { model, g, key: id }, `id: ${id}`)
+          m(
+            Group,
+            {
+              reload: model.state.reload,
+              model,
+              g,
+              key: id,
+            },
+            `id: ${id}`
+          )
         )
         : 'add a group'
     ),
-    state.showModal
+    model.getState('groups-modal')
       ? m(
         Modal,
         m('.modal-content', [
-          m(Editor, { model, page: 'group', id: model.state.group.id }),
+          m(Editor, {
+            model,
+            page: 'group',
+            id: model.state.group.id,
+            reload: model.state.reload,
+          }),
           m(BtnClose, {
             action: () => {
               model.state.group.id = ''
-              model.emitter.emit('toggle-group')
+              model.toggleState('groups-modal')
             },
             label: 'Close',
           }),
@@ -54,6 +59,4 @@ export const Groups = {
       )
       : '',
   ],
-  onremove: ({ dom, attrs: { model } }) =>
-    model.emitter.removeListener('toggle-group', toggleModal, dom),
 }

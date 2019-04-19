@@ -13,13 +13,13 @@ const RegisterPage = {
 export const UnAuthenticated = (model) => ({
   '/login': {
     onmatch: () => {
-      model.state.route = 'login'
+      model.state.route('login')
     },
     render: () => m(Layout, { model }, m(LoginPage, { model })),
   },
   '/register': {
     onmatch: () => {
-      model.state.route = 'register'
+      model.state.route('register')
     },
     render: () => m(Layout, { model }, m(RegisterPage, { model })),
   },

@@ -1,7 +1,7 @@
 const root = document.body
 import m from 'mithril'
 import { model } from './Model.js'
-import { checkAuth } from './auth.js'
+// import { checkAuth } from './auth.js'
 import { App } from './App.js'
 import { makeRoute } from './utils/index.js'
 import { UnAuthenticated } from './UnAuthenticated.js'
@@ -54,6 +54,7 @@ if ('serviceWorker' in navigator) {
 
 checkWidth()
 
-checkAuth(model)
+// checkAuth(model)
+model.user.id
   ? m.route(document.body, `/${makeRoute(model.user.name)}/groups`, App(model))
   : m.route(root, '/login', UnAuthenticated(model))

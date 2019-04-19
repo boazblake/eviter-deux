@@ -23,11 +23,11 @@ const onError = (state) => ({ message }) => {
 }
 
 const logUserIn = (model) => (state) =>
-  loginUser(state).fork(onError(state), onSuccess(state)(model))
+  loginUser(model)(state).fork(onError(state), onSuccess(state)(model))
 
 const regUser = (model) => (dto) =>
-  registerUser(dto)
-    .chain(() => loginUser(dto))
+  registerUser(model)(dto)
+    .chain(() => loginUser(model)(dto))
     .fork(onError(dto), onSuccess(dto)(model))
 
 const Login = {
@@ -62,10 +62,8 @@ const Login = {
           ]),
           m(
             'button[type=submit]',
-            {
-              class: model.state.isLoading ? 'submitting' : 'submit',
-            },
-            model.state.isLoading ? 'Submitting' : 'Submit'
+            { class: model.state.isLoading() ? 'submitting' : 'submit' },
+            model.state.isLoading() ? 'Submitting' : 'Submit'
           ),
           state.errors ? m('p.error', state.errors) : '',
         ]),
@@ -120,8 +118,8 @@ const Register = {
           ]),
           m(
             'button[type=submit]',
-            { class: model.state.isLoading ? 'submitting' : 'submit' },
-            model.state.isLoading ? 'Submitting' : 'Submit'
+            { class: model.state.isLoading() ? 'submitting' : 'submit' },
+            model.state.isLoading() ? 'Submitting' : 'Submit'
           ),
           state.errors ? m('p.error', state.errors) : '',
         ]),

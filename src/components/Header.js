@@ -7,7 +7,7 @@ import { Btn } from './Btns.js'
 const actionsAt = {
   groups: (model) => [
     m(Btn, {
-      action: () => model.emitter.emit('toggle-group'),
+      action: () => model.toggleState('groups-modal'),
       label: 'Add Group',
     }),
   ],
@@ -17,27 +17,31 @@ const actionsAt = {
   home: () => ['LANDING PAGE'],
   events: (model) => [
     m(Btn, {
-      action: m.route.set(`/${model.user.username}/groups`),
+      action: () => m.route.set(`/${makeRoute(model.user.name)}/groups`),
       label: 'Back to Groups',
     }),
     m(Btn, {
-      action: m.route.set(
-        `/${model.user.username}/${makeRoute(model.state.group.name)}/new-event`
-      ),
+      action: () =>
+        m.route.set(
+          `/${makeRoute(model.user.name)}/${makeRoute(
+            model.state.group.name
+          )}/new-event`
+        ),
       label: 'Add Event',
     }),
   ],
   newGroup: (model) => [
     m(Btn, {
-      action: m.route.set(`/${model.user.username}/groups`),
+      action: () => m.route.set(`/${makeRoute(model.user.name)}/groups`),
       label: 'Back to Groups',
     }),
   ],
   newEvent: (model) => [
     m(Btn, {
-      action: m.route.set(
-        `/${model.user.username}/groups${makeRoute(model.state.group.name)}`
-      ),
+      action: () =>
+        m.route.set(
+          `/${model.user.username}/groups${makeRoute(model.state.group.name)}`
+        ),
       label: 'Back to Group',
     }),
   ],
@@ -45,7 +49,7 @@ const actionsAt = {
 
 const Actions = {
   view: ({ attrs: { model } }) =>
-    m('.actions', actionsAt[model.state.route](model)),
+    m('.actions', actionsAt[model.state.route()](model)),
 }
 
 const Header = {

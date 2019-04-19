@@ -8,12 +8,13 @@ export const validateData = ({ email, password }) =>
 export const authenticated = (model) => (route) =>
   m.route(document.body, route, App(model))
 
-export const loginUser = (data) => {
+export const loginUser = (model) => (data) => {
   let dto = {
     login: data.email,
     password: data.password,
   }
 
-  return http.postTask('users/login')({ dto })
+  return http.postTask(model)('users/login')({ dto })
 }
-export const registerUser = (dto) => http.postTask('users/register')({ dto })
+export const registerUser = (model) => (dto) =>
+  http.postTask(model)('users/register')({ dto })

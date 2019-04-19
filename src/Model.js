@@ -1,16 +1,19 @@
-import AsyncEventEmitter from 'async-eventemitter'
-const emitter = new AsyncEventEmitter()
+import Stream from 'mithril-stream'
 
 const pages = ['login', 'logout', 'createEvent', '']
 
 const state = {
-  isLoading: false,
+  isLoading: Stream(false),
   profile: '',
   tabsShowing: false,
   modalShowing: false,
-  route: '',
+  route: Stream(''),
   group: { id: '', name: '' },
   event: { id: '', name: '' },
+}
+
+const toggleDict = {
+  'groups-modal': Stream(false),
 }
 
 const user = { objectId: '', name: '' }
@@ -18,15 +21,13 @@ const user = { objectId: '', name: '' }
 const errors = null
 
 const showTabs = (model) => (model.state.tabsShowing = !model.state.tabsShowing)
-const showModal = (model) =>
-  (model.state.modalShowing = !model.state.modalShowing)
 
 export const model = {
-  emitter,
   pages,
   user,
   state,
   showTabs,
-  showModal,
   errors,
+  getState: (ctx) => toggleDict[ctx](),
+  toggleState: (ctx) => toggleDict[ctx](!toggleDict[ctx]()),
 }

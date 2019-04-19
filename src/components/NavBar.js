@@ -32,7 +32,7 @@ const Sidebar = ({ attrs: { model } }) => {
         tabs.map((tab, idx) =>
           m(Tab, {
             key: idx,
-            active: model.state.route == tab,
+            active: model.state.route() == tab,
             tab,
           })
         )
