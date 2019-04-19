@@ -137,6 +137,7 @@ html {
 .group,
 .attendance,
 .invite {
+  position: relative;
   min-height: fit-content;
   padding: 4px 10px;
   border: 1.5px dashed grey;
@@ -144,7 +145,7 @@ html {
   flex-grow: 1;
   margin: 10px auto;
   transition-duration: 0.3s;
-  width: 100%;
+  width: 90%;
   min-width: 280px;
   justify-content: space-between;
   align-content: center;
@@ -241,6 +242,23 @@ html {
 
   &:hover {
     background: #bdc3c7;
+    box-shadow: 0px 1px 2px 0px rgba(20, 29, 37, 0.2);
+  }
+}
+
+.btn-delete {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  border-radius: 5px;
+  background: #95a5a6;
+  color: #7f8c8d;
+  position: absolute;
+  top: 0;
+  right: -5px;
+
+  &:hover {
+    background: #c0392b;
     box-shadow: 0px 1px 2px 0px rgba(20, 29, 37, 0.2);
   }
 }

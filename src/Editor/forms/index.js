@@ -11,6 +11,7 @@ export const groupForm = (state) => [
         type: 'text',
         id: 'name',
         name: 'name',
+        value: state.data.name,
         onchange: (e) => {
           state.data.name = e.target.value
         },

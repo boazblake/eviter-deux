@@ -4,9 +4,8 @@ const secure = (str) => bcrypt.hash(str, 10)
 
 const checkAuth = (model) => {
   let userLogedIn =
+    model.user.id &&
     window.sessionStorage.getItem('user-token') == model.user['user-token']
-
-  userLogedIn ? userLogedIn : window.sessionStorage.removeItem('user-token')
 
   console.log(
     'userLogedIn',

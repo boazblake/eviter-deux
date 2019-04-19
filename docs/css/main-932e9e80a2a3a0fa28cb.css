@@ -52,7 +52,7 @@ body {
   max-height: 100%;
   width: 100%; }
 
-.navigationModal {
+.navigationMenu {
   position: absolute;
   top: 0;
   left: 0;
@@ -78,8 +78,9 @@ body {
   justify-content: center; }
 
 .form {
-  width: 80%;
-  margin: 0 auto; }
+  margin: 0 auto;
+  display: flex;
+  flex-flow: column; }
   .form .error {
     color: red; }
   .form .fieldset {
@@ -107,6 +108,7 @@ body {
 
 .group,
 .invite {
+  position: relative;
   min-height: -webkit-fit-content;
   min-height: -moz-fit-content;
   min-height: fit-content;
@@ -116,7 +118,7 @@ body {
   flex-grow: 1;
   margin: 10px auto;
   transition-duration: 0.3s;
-  width: 100%;
+  width: 90%;
   min-width: 280px;
   justify-content: space-between;
   align-content: center;
@@ -186,6 +188,34 @@ body {
   cursor: pointer;
   border-radius: 5px; }
 
+.btn-close {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  border-radius: 5px;
+  background: #95a5a6;
+  color: #7f8c8d;
+  position: absolute;
+  top: 0;
+  right: -5px; }
+  .btn-close:hover {
+    background: #bdc3c7;
+    box-shadow: 0px 1px 2px 0px rgba(20, 29, 37, 0.2); }
+
+.btn-delete {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  border-radius: 5px;
+  background: #95a5a6;
+  color: #7f8c8d;
+  position: absolute;
+  top: 0;
+  right: -5px; }
+  .btn-delete:hover {
+    background: #c0392b;
+    box-shadow: 0px 1px 2px 0px rgba(20, 29, 37, 0.2); }
+
 .Btn {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -204,6 +234,51 @@ body {
 
 .left {
   margin-right: auto; }
+
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+@keyframes fade-in {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+@-webkit-keyframes fade-out {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
+
+@keyframes fade-out {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s;
+  -webkit-animation: fade-in 0.5s;
+          animation: fade-in 0.5s; }
+
+.modal.hide {
+  -webkit-animation: fade-out 0.5s;
+          animation: fade-out 0.5s; }
+
+.modal-content {
+  position: relative; }
 
 /* Media Qs */
 @media (min-width: 668px) {
@@ -1357,4 +1432,4 @@ stretchRight
             transform: rotateZ(-308.57143deg);
     opacity: 1; } }
 
-/*# sourceMappingURL=main-da8a386c67b1e2f6b7ca.css.map*/
+/*# sourceMappingURL=main-932e9e80a2a3a0fa28cb.css.map*/

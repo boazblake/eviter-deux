@@ -4,6 +4,7 @@ import Layout from './components/Layout.js'
 import { Groups } from './Groups/component'
 import { Invites } from './Invites/component'
 import { Editor } from './Editor/component'
+import { UnAuthenticated } from './UnAuthenticated.js'
 import { checkAuth } from './auth.js'
 
 const GroupsPage = {
@@ -21,25 +22,12 @@ const EditorPage = {
 
 export const App = (model) => ({
   '/:username/groups': {
-    onmatch: (args, path) => {
+    onmatch: () => {
       model.state.route = 'groups'
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(GroupsPage, { model })),
   },
-  // '/:username/edit/:group': {
-  //   onmatch: (args, path) => {
-  //     console.log('args, path', args, path)
-  //     model.state.route = 'editGroup'
-  //     checkAuth(model)
-  //   },
-  //   render: () =>
-  //     m(
-  //       Layout,
-  //       { model },
-  //       m(EditorPage, { model, page: 'group', id: 'groupId' })
-  //     ),
-  // },
   '/:username/:group/events': {
     onmatch: (args, path) => {
       console.log('args, path', args, path)

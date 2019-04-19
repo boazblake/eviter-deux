@@ -3,17 +3,8 @@ import m from 'mithril'
 import { model } from './Model.js'
 import { checkAuth } from './auth.js'
 import { App } from './App.js'
-import Layout from './components/Layout.js'
-import { Login, Register } from './Login/component'
 import { makeRoute } from './utils/index.js'
-
-const LoginPage = {
-  view: ({ attrs: { model } }) => m('.component', m(Login, { model })),
-}
-
-const RegisterPage = {
-  view: ({ attrs: { model } }) => m('.component', m(Register, { model })),
-}
+import { UnAuthenticated } from './UnAuthenticated.js'
 
 if (module.hot) {
   module.hot.accept()
@@ -63,23 +54,6 @@ if ('serviceWorker' in navigator) {
 
 checkWidth()
 
-if (checkAuth(model)) {
-  m.route(document.body, `/${makeRoute(model.user.name)}/groups`, App(model))
-}
-
-const UnAuthenticated = (model) => ({
-  '/login': {
-    onmatch: () => {
-      model.state.route = 'login'
-    },
-    render: () => m(Layout, { model }, m(LoginPage, { model })),
-  },
-  '/register': {
-    onmatch: () => {
-      model.state.route = 'register'
-    },
-    render: () => m(Layout, { model }, m(RegisterPage, { model })),
-  },
-})
-
-m.route(root, '/login', UnAuthenticated(model))
+checkAuth(model)
+  ? m.route(document.body, `/${makeRoute(model.user.name)}/groups`, App(model))
+  : m.route(root, '/login', UnAuthenticated(model))

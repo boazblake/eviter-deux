@@ -27,7 +27,7 @@ const logUserIn = (model) => (state) =>
 
 const regUser = (model) => (dto) =>
   registerUser(dto)
-    .chain((_) => loginUser(dto))
+    .chain(() => loginUser(dto))
     .fork(onError(dto), onSuccess(dto)(model))
 
 const Login = {

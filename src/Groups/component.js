@@ -42,9 +42,12 @@ export const Groups = {
       ? m(
         Modal,
         m('.modal-content', [
-          m(Editor, { model, page: 'group' }),
+          m(Editor, { model, page: 'group', id: model.state.group.id }),
           m(BtnClose, {
-            action: () => model.emitter.emit('toggle-group'),
+            action: () => {
+              model.state.group.id = ''
+              model.emitter.emit('toggle-group')
+            },
             label: 'Close',
           }),
         ])

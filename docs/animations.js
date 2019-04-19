@@ -1,4 +1,4 @@
-export const animateComponentEntrance = idx => ({ dom }) => {
+export const animateComponentEntrance = (idx) => ({ dom }) => {
   dom.style.opacity = 0
   return setTimeout(() => {
     dom.classList.toggle('stretchRight')
@@ -13,7 +13,7 @@ export const animateSidebarEntrance = ({ dom }) => {
 }
 
 export const animateChildrenEntrance = ({ dom }) => {
-  let children = [ ...dom.children ]
+  let children = [...dom.children]
 
   return children.map((child, idx) => {
     child.style.opacity = 0
@@ -24,7 +24,7 @@ export const animateChildrenEntrance = ({ dom }) => {
   })
 }
 
-export const animateChildrenLimitsEntrance = idx => ({ dom }) => {
+export const animateChildrenLimitsEntrance = (idx) => ({ dom }) => {
   dom.style.opacity = 0
   setTimeout(() => {
     dom.classList.toggle('slideDown')
@@ -32,30 +32,28 @@ export const animateChildrenLimitsEntrance = idx => ({ dom }) => {
   }, (idx + 1) * 200)
 }
 
-export const animate = dir => ({ dom }) => {
+export const animate = (dir) => ({ dom }) => {
   dom.style.opacity = 0
   setTimeout(() => {
     dom.classList.toggle(dir)
     dom.style.opacity = 1
-  },  200)
+  }, 200)
 }
 
-export const slideModalOut = ({ dom }) => {
+export const slideMenuOut = ({ dom }) => {
   return new Promise(() => {
     dom.classList.remove('slideRight')
-    return setTimeout(()=> {
+    return setTimeout(() => {
       dom.classList.add('reverseAnimation', 'slideRight')
-    } , 200)
+    }, 200)
   })
 }
 
-
 export const animateChildrenLimitsExit = ({ dom }) =>
   new Promise(() => {
-    [ ...dom.children ].reverse().map((child, idx) => {
+    [...dom.children].reverse().map((child, idx) => {
       return setTimeout(() => {
         child.style.display = 'none'
       }, idx * 100)
     })
   })
-
