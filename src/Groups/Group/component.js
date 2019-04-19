@@ -42,15 +42,11 @@ export const Group = {
         m('p.title', 'Edit')
       ),
       m('p.groupSize', members.length),
-      m(
-        'button.btn-delete',
-        {
-          onclick: () => {
-            deleteGroup(objectId).fork(onError(model), onSuccess(model))
-          },
+      m('button.btn-delete', {
+        onclick: () => {
+          deleteGroup(objectId).fork(onError(model), onSuccess(model))
         },
-        m('p.title', 'X')
-      ),
+      }),
     ])
   },
 }

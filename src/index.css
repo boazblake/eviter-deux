@@ -60,6 +60,7 @@ html {
   overflow-y: scroll;
   padding: 4px;
   max-height: 100%;
+  min-height: 100%;
   width: 100%;
 }
 
@@ -134,6 +135,17 @@ html {
   font-weight: 900;
 }
 
+.groups {
+  display: flex;
+  justify-content: flex-start;
+  align-content: center;
+  flex-flow: column;
+  overflow-y: scroll;
+  padding: 4px;
+  max-height: 100%;
+  width: 100%;
+}
+
 .group,
 .attendance,
 .invite {
@@ -150,13 +162,13 @@ html {
   justify-content: space-between;
   align-content: center;
 
-  /* .title,
+  .title,
   .email,
   .date,
   .select,
-  .rsvps,
-  .partySize {
-  } */
+  .rsvps .partySize {
+    margin: 0;
+  }
 
   .rsvps {
     display: flex;
@@ -188,6 +200,10 @@ html {
   &:hover {
     border: 1.5px dashed #2980b9;
     box-shadow: 0px 2px 4px 0px rgba(20, 29, 37, 0.2);
+
+    > .btn-delete {
+      opacity: 1;
+    }
   }
 }
 
@@ -250,12 +266,18 @@ html {
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
+  opacity: 0;
   border-radius: 5px;
   background: #95a5a6;
-  color: #7f8c8d;
+  color: #ecf0f1;
   position: absolute;
-  top: 0;
+  top: -5px;
   right: -5px;
+  /* height: 15px; */
+
+  &:before {
+    content: "X";
+  }
 
   &:hover {
     background: #c0392b;
