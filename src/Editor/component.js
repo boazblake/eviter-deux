@@ -3,29 +3,22 @@ import m from 'mithril'
 import { groupForm, eventForm } from './forms/index.js'
 import { saveGroup, assocUserToGroup, updateGroup } from './model.js'
 
-const onError = (state) => ({ message }) => {
-  state.error = message
-  console.error('error', state.error)
-}
+const onError = (state) => ({ message }) => (state.error = message)
 
-const validateData = (data) => {
-  return data
-}
+const validateData = (data) => data
 
-const onSaveGroupSuccess = (state) => (model) => (reload) => (data) => {
-  model.state.group.id = ''
-  model.state.group.name = ''
+const onSaveGroupSuccess = (state) => (model) => (reload) => () => {
+  model.state.group.id('')
+  model.state.group.name('')
   state.error = null
-  console.log('saved', model, data)
   model.toggleState('groups-modal')
   reload()
 }
 
 const saveForm = (model) => (state) => (reload) => {
-  console.log('save form', model.state, model.user, state)
   if (model.state.route() == 'groups') {
-    if (model.state.group.id) {
-      return updateGroup(model)(model.state.group.id, state.data.name).fork(
+    if (model.state.group.id()) {
+      return updateGroup(model)(model.state.group.id(), state.data.name).fork(
         onError(state),
         onSaveGroupSuccess(state)(model)(reload)
       )
@@ -36,7 +29,16 @@ const saveForm = (model) => (state) => (reload) => {
     }
   }
   if (model.state.route() == 'events') {
-    console.log('state in events', state)
+    if (model.state.event.id()) {
+      return updateGroup(model)(model.state.group.id(), state.data.name).fork(
+        onError(state),
+        onSaveGroupSuccess(state)(model)(reload)
+      )
+    } else {
+      return saveGroup(model)(state.data.name)
+        .chain(assocUserToGroup(model)(model.user.objectId))
+        .fork(onError(state), onSaveGroupSuccess(state)(model)(reload))
+    }
   }
   if (model.state.route() == 'editGroup') {
     // return editGroup(model)(state).fork(onError(state), onSaveSuccess(model))
@@ -56,20 +58,16 @@ export const Editor = {
   oninit: ({ attrs: { model, page }, state }) => {
     state.form = getForm[page]
     state.data = {}
-    console.log('page', page, state)
     state.userId = model.user.id
-    if (model.state.group.id) {
-      console.log('id', model.state.group.id)
-      state.data.name = model.state.group.name
-    } else {
-      console.log('no id')
-      state.data = {}
-    }
+
+    model.state.group.id()
+      ? (state.data.name = model.state.group.name())
+      : (state.data = {})
+
     return state
   },
-  view: ({ attrs: { model, reload }, state }) => {
-    // console.log('Editor', state, model)
-    return m(
+  view: ({ attrs: { model, reload }, state }) =>
+    m(
       'form.form',
       {
         onsubmit: (e) => {
@@ -87,6 +85,5 @@ export const Editor = {
         },
         model.state.isLoading() ? 'Submitting' : 'Submit'
       )
-    )
-  },
+    ),
 }

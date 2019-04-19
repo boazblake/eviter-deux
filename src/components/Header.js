@@ -17,22 +17,25 @@ const actionsAt = {
   home: () => ['LANDING PAGE'],
   events: (model) => [
     m(Btn, {
-      action: () => m.route.set(`/${makeRoute(model.user.name)}/groups`),
+      action: () => {
+        model.state.group.name('')
+        model.state.group.id('')
+        m.route.set(`/${makeRoute(model.user.name)}/groups`)
+      },
       label: 'Back to Groups',
     }),
     m(Btn, {
-      action: () =>
-        m.route.set(
-          `/${makeRoute(model.user.name)}/${makeRoute(
-            model.state.group.name
-          )}/new-event`
-        ),
+      action: () => model.toggleState('events-modal'),
       label: 'Add Event',
     }),
   ],
   newGroup: (model) => [
     m(Btn, {
-      action: () => m.route.set(`/${makeRoute(model.user.name)}/groups`),
+      action: () => {
+        model.state.group.name('')
+        model.state.group.id('')
+        m.route.set(`/${makeRoute(model.user.name)}/groups`)
+      },
       label: 'Back to Groups',
     }),
   ],
@@ -40,7 +43,7 @@ const actionsAt = {
     m(Btn, {
       action: () =>
         m.route.set(
-          `/${model.user.username}/groups${makeRoute(model.state.group.name)}`
+          `/${model.user.name}/groups${makeRoute(model.state.group.name())}`
         ),
       label: 'Back to Group',
     }),

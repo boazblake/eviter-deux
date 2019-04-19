@@ -1,55 +1,56 @@
 import m from 'mithril'
-import { Group } from './Group/component.js'
 import Modal from '../components/Modal.js'
 import { BtnClose } from '../components/Btns.js'
 import { Editor } from '../Editor/component.js'
-import { findGroups } from './model.js'
+import { findEvents } from './model.js'
 
-const findGroupsError = (model) => (errors) => model.state.errors(errors)
+import { Event } from './Event/component.js'
 
-const findGroupsSuccess = (model) => (groups) => model.groups(groups)
+const findEventsError = (model) => (errors) => model.state.errors(errors)
 
-export const Groups = {
+const findEventsSuccess = (model) => ({ events }) => model.events(events)
+
+export const Events = {
   oninit: ({ attrs: { model } }) => {
     model.state.reload = () =>
-      findGroups(model)(model.user.objectId).fork(
-        findGroupsError(model),
-        findGroupsSuccess(model)
+      findEvents(model)(model.state.group.id())(model.user.objectId).fork(
+        findEventsError(model),
+        findEventsSuccess(model)
       )
   },
   oncreate: ({ attrs: { model } }) => model.state.reload(),
   view: ({ attrs: { model } }) => [
     m(
-      '.groups',
-      model.groups()
-        ? model.groups().map((g, id) =>
+      '.events',
+      model.events()
+        ? model.events().map((i, id) =>
           m(
-            Group,
+            Event,
             {
               reload: model.state.reload,
               model,
-              g,
+              i,
               key: id,
             },
             `id: ${id}`
           )
         )
-        : 'add a group'
+        : 'No Events Yet'
     ),
-    model.getState('groups-modal')
+    model.getState('events-modal')
       ? m(
         Modal,
         m('.modal-content', [
           m(Editor, {
             model,
-            page: 'group',
-            id: model.state.group.id(),
+            page: 'event',
+            id: model.state.event.id(),
             reload: model.state.reload,
           }),
           m(BtnClose, {
             action: () => {
-              model.state.group.id('')
-              model.toggleState('groups-modal')
+              model.state.event.id('')
+              model.toggleState('events-modal')
             },
             label: 'Close',
           }),

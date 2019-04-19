@@ -2,8 +2,7 @@ import m from 'mithril'
 
 import Layout from './components/Layout.js'
 import { Groups } from './Groups/component'
-import { Invites } from './Invites/component'
-import { Editor } from './Editor/component'
+import { Events } from './Events/component'
 import { UnAuthenticated } from './UnAuthenticated.js'
 import { checkAuth } from './auth.js'
 
@@ -12,12 +11,7 @@ const GroupsPage = {
 }
 
 const EventsPage = {
-  view: ({ attrs: { model } }) => m('.component', m(Invites, { model })),
-}
-
-const EditorPage = {
-  view: ({ attrs: { model, page, id } }) =>
-    m('.component', m(Editor, { model, page, id })),
+  view: ({ attrs: { model } }) => m('.component', m(Events, { model })),
 }
 
 export const App = (model) => ({
@@ -35,28 +29,6 @@ export const App = (model) => ({
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(EventsPage, { model })),
-  },
-  '/:username/:group/new-event': {
-    onmatch: (args, path) => {
-      console.log('args, path', args, path)
-      model.state.route('newEvent')
-      checkAuth(model)
-    },
-    render: () =>
-      m(Layout, { model }, m(EditorPage, { model, page: 'event', id: null })),
-  },
-  '/:username/:group/edit/:event': {
-    onmatch: (args, path) => {
-      console.log('args, path', args, path)
-      model.state.route('editEvent')
-      checkAuth(model)
-    },
-    render: () =>
-      m(
-        Layout,
-        { model },
-        m(EditorPage, { model, page: 'event', id: 'eventID' })
-      ),
   },
   '/logout': {
     onmatch: () => {
