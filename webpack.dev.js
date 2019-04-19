@@ -1,6 +1,6 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const common = require('./webpack.common.js')
 
@@ -22,30 +22,20 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /(\.css|\.scss)$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
           {
-            loader: 'css-hot-loader',
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === 'development',
+              // if hmr does not work, this is a forceful method.
+              // reloadAll: true,
+            },
           },
-        ].concat(
-          ExtractTextPlugin.extract({
-            use: [
-              {
-                loader: 'css-loader',
-                options: { sourceMap: true },
-              },
-              {
-                loader: 'postcss-loader',
-              },
-              {
-                loader: 'sass-loader',
-                options: { sourceMap: true },
-              },
-            ],
-            // use style-loader in development
-            fallback: 'style-loader',
-          })
-        ),
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.js$/,
@@ -67,9 +57,11 @@ module.exports = merge(common, {
     ],
   },
   plugins: [
-    new ExtractTextPlugin({
-      filename: (getPath) => getPath('css/[name].css'),
-      allChunks: true,
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
