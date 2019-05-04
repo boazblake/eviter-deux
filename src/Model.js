@@ -8,6 +8,7 @@ const state = {
   profile: '',
   tabsShowing: false,
   route: Stream(''),
+  modal: Stream({}),
   group: { id: Stream(''), name: Stream('') },
   event: { id: Stream(''), name: Stream('') },
   invite: { id: Stream(''), name: Stream('') },
@@ -16,7 +17,9 @@ const state = {
 
 const toggleDict = {
   'groups-modal': Stream(false),
+  'group-modal': Stream(false),
   'events-modal': Stream(false),
+  'event-modal': Stream(false),
   'invites-modal': Stream(false),
 }
 

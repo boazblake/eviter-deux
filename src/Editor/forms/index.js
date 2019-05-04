@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { format } from 'date-fns'
+import { format, getTime } from 'date-fns'
 
 export const groupForm = (state) => [
   m('fieldset.fieldset', [
@@ -27,6 +27,7 @@ export const eventForm = (state) => [
     m('.fields', [
       m('label', { for: 'title' }, 'title'),
       m('input', {
+        value: state.data.title,
         type: 'text',
         id: 'title',
         name: 'title',
@@ -38,6 +39,7 @@ export const eventForm = (state) => [
     m('.fields', [
       m('label', { for: 'description' }, 'description'),
       m('input', {
+        value: state.data.description,
         type: 'textarea',
         id: 'description',
         name: 'description',
@@ -49,6 +51,7 @@ export const eventForm = (state) => [
     m('.fields', [
       m('label', { for: 'location' }, 'location'),
       m('input', {
+        value: state.data.location,
         type: 'textarea',
         id: 'location',
         name: 'location',
@@ -58,13 +61,14 @@ export const eventForm = (state) => [
       }),
     ]),
     m('.fields', [
-      m('label', { for: 'date' }, 'date'),
+      m('label', { for: 'startDate' }, 'startDate'),
       m('input', {
+        value: format(state.data.startDate, 'YYYY-MM-DD'),
         type: 'date',
-        id: 'date',
-        name: 'date',
+        id: 'startDate',
+        name: 'startDate',
         onchange: (e) => {
-          state.data.date = format(e.target.value, 'GG')
+          state.data.startDate = format(e.target.value, 'YYYY-MM-DD')
         },
       }),
     ]),

@@ -147,7 +147,7 @@ html {
 }
 
 .group,
-.attendance,
+.event,
 .invite {
   position: relative;
   min-height: fit-content;

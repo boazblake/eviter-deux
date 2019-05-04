@@ -1,7 +1,13 @@
 import m from 'mithril'
 
 import { groupForm, eventForm } from './forms/index.js'
-import { saveGroup, assocUserToGroup, updateGroup } from './model.js'
+import {
+  saveGroup,
+  assocUserToGroup,
+  updateGroupName,
+  saveEvent,
+  updateEventDetails,
+} from './model.js'
 
 const onError = (state) => ({ message }) => (state.error = message)
 
@@ -15,13 +21,20 @@ const onSaveGroupSuccess = (state) => (model) => (reload) => () => {
   reload()
 }
 
+const onSaveEvent = (state) => (model) => (reload) => (_) => {
+  console.log('save', _, state, model, reload)
+  state.error = null
+  model.toggleState('events-modal')
+  reload()
+}
+
 const saveForm = (model) => (state) => (reload) => {
   if (model.state.route() == 'groups') {
     if (model.state.group.id()) {
-      return updateGroup(model)(model.state.group.id(), state.data.name).fork(
-        onError(state),
-        onSaveGroupSuccess(state)(model)(reload)
-      )
+      return updateGroupName(model)(
+        model.state.group.id(),
+        state.data.name
+      ).fork(onError(state), onSaveGroupSuccess(state)(model)(reload))
     } else {
       return saveGroup(model)(state.data.name)
         .chain(assocUserToGroup(model)(model.user.objectId))
@@ -30,14 +43,17 @@ const saveForm = (model) => (state) => (reload) => {
   }
   if (model.state.route() == 'events') {
     if (model.state.event.id()) {
-      return updateGroup(model)(model.state.group.id(), state.data.name).fork(
+      console.log(model.state.group.id())
+      return updateEventDetails(model)(state.data).fork(
         onError(state),
-        onSaveGroupSuccess(state)(model)(reload)
+        onSaveEvent(state)(model)(reload)
       )
     } else {
-      return saveGroup(model)(state.data.name)
-        .chain(assocUserToGroup(model)(model.user.objectId))
-        .fork(onError(state), onSaveGroupSuccess(state)(model)(reload))
+      console.log('saving new event', model.state.group.id(), model)
+      return saveEvent(model)(state.data)(model.state.group.id()).fork(
+        onError(state),
+        onSaveEvent(state)(model)(reload)
+      )
     }
   }
   if (model.state.route() == 'editGroup') {
@@ -57,12 +73,15 @@ const getForm = {
 export const Editor = {
   oninit: ({ attrs: { model, page }, state }) => {
     state.form = getForm[page]
-    state.data = {}
-    state.userId = model.user.id
-
-    model.state.group.id()
-      ? (state.data.name = model.state.group.name())
-      : (state.data = {})
+    state.data = model.state.modal()
+    console.log('state.data', state.data)
+    // state.userId = model.user.id
+    // console.log(
+    //   state,
+    //   dto.objectId,
+    //   model.state[page].id(),
+    //   dto.objectId == model.state[page].id()
+    // )
 
     return state
   },

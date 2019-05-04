@@ -36,6 +36,8 @@ export const Groups = {
         )
         : 'add a group'
     ),
+
+    //=========================MODAL=============================================
     model.getState('groups-modal')
       ? m(
         Modal,
@@ -43,12 +45,12 @@ export const Groups = {
           m(Editor, {
             model,
             page: 'group',
-            id: model.state.group.id(),
             reload: model.state.reload,
           }),
           m(BtnClose, {
             action: () => {
               model.state.group.id('')
+              model.state.modal({})
               model.toggleState('groups-modal')
             },
             label: 'Close',

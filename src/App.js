@@ -3,6 +3,7 @@ import m from 'mithril'
 import Layout from './components/Layout.js'
 import { Groups } from './Groups/component'
 import { Events } from './Events/component'
+import { EventHome } from './EventHome/component'
 import { UnAuthenticated } from './UnAuthenticated.js'
 import { checkAuth } from './auth.js'
 
@@ -12,6 +13,10 @@ const GroupsPage = {
 
 const EventsPage = {
   view: ({ attrs: { model } }) => m('.component', m(Events, { model })),
+}
+
+const EventPage = {
+  view: ({ attrs: { model } }) => m('.component', m(EventHome, { model })),
 }
 
 export const App = (model) => ({
@@ -24,11 +29,19 @@ export const App = (model) => ({
   },
   '/:username/:group/events': {
     onmatch: (args, path) => {
-      console.log('args, path', args, path)
+      // console.log('args, path', args, path)
       model.state.route('events')
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(EventsPage, { model })),
+  },
+  '/:username/:group/event/:eventId': {
+    onmatch: (args, path) => {
+      // console.log('args, path', args, path)
+      model.state.route('events')
+      checkAuth(model)
+    },
+    render: () => m(Layout, { model }, m(EventPage, { model })),
   },
   '/logout': {
     onmatch: () => {

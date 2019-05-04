@@ -19,43 +19,49 @@ export const Events = {
       )
   },
   oncreate: ({ attrs: { model } }) => model.state.reload(),
-  view: ({ attrs: { model } }) => [
-    m(
-      '.events',
-      model.events()
-        ? model.events().map((i, id) =>
-          m(
-            Event,
-            {
-              reload: model.state.reload,
-              model,
-              i,
-              key: id,
-            },
-            `id: ${id}`
+  view: ({ attrs: { model } }) => {
+    console.log(model.events())
+    return [
+      m(
+        '.events',
+        model.events()
+          ? model.events().map((e, idx) =>
+            m(
+              Event,
+              {
+                reload: model.state.reload,
+                model,
+                e,
+                key: idx,
+              },
+              `id: ${idx}`
+            )
           )
+          : 'No Events Yet'
+      ),
+
+      //=========================MODAL=============================================
+      model.getState('events-modal')
+        ? m(
+          Modal,
+          m('.modal-content', [
+            m(Editor, {
+              model,
+              page: 'event',
+              reload: model.state.reload,
+            }),
+            m(BtnClose, {
+              action: () => {
+                model.state.event.id('')
+                model.state.modal({})
+                model.toggleState('events-modal')
+              },
+              label: 'Close',
+            }),
+          ])
         )
-        : 'No Events Yet'
-    ),
-    model.getState('events-modal')
-      ? m(
-        Modal,
-        m('.modal-content', [
-          m(Editor, {
-            model,
-            page: 'event',
-            id: model.state.event.id(),
-            reload: model.state.reload,
-          }),
-          m(BtnClose, {
-            action: () => {
-              model.state.event.id('')
-              model.toggleState('events-modal')
-            },
-            label: 'Close',
-          }),
-        ])
-      )
-      : '',
-  ],
+        : '',
+    ]
+  },
+  onremove: ({ attrs: { model } }) => model.events([]),
 }

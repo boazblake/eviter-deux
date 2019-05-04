@@ -7,12 +7,12 @@ const checkAuth = (model) => {
     model.user.id &&
     window.sessionStorage.getItem('user-token') == model.user['user-token']
 
-  console.log(
-    'userLogedIn',
-    userLogedIn,
-    model.user,
-    window.sessionStorage.getItem('user-token')
-  )
+  // console.log(
+  //   'userLogedIn',
+  //   userLogedIn,
+  //   model.user,
+  //   window.sessionStorage.getItem('user-token')
+  // )
 
   return userLogedIn
 }

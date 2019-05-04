@@ -18,7 +18,7 @@ const onSuccess = (state) => (model) => (user) => {
 
 const onError = (state) => ({ message }) => {
   state.errors = message
-  console.log(state)
+  console.error('ERROR IN LOGIN/REGISTER', state)
   return state
 }
 
