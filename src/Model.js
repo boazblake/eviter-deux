@@ -8,19 +8,19 @@ const state = {
   profile: '',
   tabsShowing: false,
   route: Stream(''),
+  page: Stream(''),
   modal: Stream({}),
   group: { id: Stream(''), name: Stream('') },
   event: { id: Stream(''), name: Stream('') },
   invite: { id: Stream(''), name: Stream('') },
   errors: Stream(''),
+  eventBlock: {},
 }
 
 const toggleDict = {
   'groups-modal': Stream(false),
-  'group-modal': Stream(false),
   'events-modal': Stream(false),
-  'event-modal': Stream(false),
-  'invites-modal': Stream(false),
+  'event-page': Stream(false),
 }
 
 const user = { objectId: '', name: '' }
@@ -39,4 +39,12 @@ export const model = {
   errors,
   getState: (ctx) => toggleDict[ctx](),
   toggleState: (ctx) => toggleDict[ctx](!toggleDict[ctx]()),
+  getEventBlock: ({ model, event, group }) =>
+    model.state.eventBlock[`${event}-${group}`],
+  toggleEventBlock: ({ model, event, group }) =>
+    model.state.eventBlock[`${event}-${group}`]
+      ? (model.state.eventBlock[`${event}-${group}`] = !model.state.eventBlock[
+        `${event}-${group}`
+      ])
+      : (model.state.eventBlock[`${event}-${group}`] = true),
 }

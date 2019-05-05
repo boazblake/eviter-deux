@@ -21,8 +21,7 @@ const onSaveGroupSuccess = (state) => (model) => (reload) => () => {
   reload()
 }
 
-const onSaveEvent = (state) => (model) => (reload) => (_) => {
-  console.log('save', _, state, model, reload)
+const onSaveEvent = (state) => (model) => (reload) => () => {
   state.error = null
   model.toggleState('events-modal')
   reload()
@@ -43,13 +42,11 @@ const saveForm = (model) => (state) => (reload) => {
   }
   if (model.state.route() == 'events') {
     if (model.state.event.id()) {
-      console.log(model.state.group.id())
       return updateEventDetails(model)(state.data).fork(
         onError(state),
         onSaveEvent(state)(model)(reload)
       )
     } else {
-      console.log('saving new event', model.state.group.id(), model)
       return saveEvent(model)(state.data)(model.state.group.id()).fork(
         onError(state),
         onSaveEvent(state)(model)(reload)
@@ -71,18 +68,9 @@ const getForm = {
 }
 
 export const Editor = {
-  oninit: ({ attrs: { model, page }, state }) => {
-    state.form = getForm[page]
+  oninit: ({ attrs: { model }, state }) => {
+    state.form = getForm[model.state.page()]
     state.data = model.state.modal()
-    console.log('state.data', state.data)
-    // state.userId = model.user.id
-    // console.log(
-    //   state,
-    //   dto.objectId,
-    //   model.state[page].id(),
-    //   dto.objectId == model.state[page].id()
-    // )
-
     return state
   },
   view: ({ attrs: { model, reload }, state }) =>

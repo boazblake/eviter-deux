@@ -1,6 +1,6 @@
 import m from 'mithril'
 
-import { format, getTime } from 'date-fns'
+import { format } from 'date-fns'
 
 export const groupForm = (state) => [
   m('fieldset.fieldset', [

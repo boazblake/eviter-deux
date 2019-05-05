@@ -1,9 +1,6 @@
 import m from 'mithril'
-import Modal from '../../components/Modal.js'
-import { BtnClose } from '../../components/Btns.js'
-import { Editor } from '../../Editor/component.js'
-import { makeRoute } from '../../utils/index.js'
 import { deleteEvent } from '../model.js'
+import { EventBlock } from './EventBlock/component'
 
 const onError = (model) => (errors) => {
   console.warn('errors', errors, model)
@@ -15,58 +12,52 @@ const onSuccess = (reload) => (res) => {
 }
 
 export const Event = {
-  view: ({ attrs: { reload, model, e } }) => {
-    return m('.event', [
-      m(
-        'button.btn',
-        {
-          onclick: () =>
-            m.route.set(
-              `/${makeRoute(model.user.name)}/${makeRoute(name)}/events`
-            ),
-        },
-        m('p.title', e.title)
-      ),
-      m(
-        'button.btn',
-        {
-          onclick: () => {
-            model.state.event.id(e.objectId)
-            model.state.modal(e)
-            model.toggleState('events-modal')
+  view: ({ attrs: { reload, model, e } }) =>
+    m('', [
+      m('.event', [
+        m(
+          'button.btn',
+          {
+            onclick: () => {
+              model.state.event.id(e.objectId)
+              model.state.event.name(e.title)
+              model.toggleEventBlock({
+                model,
+                event: e.objectId,
+                group: model.state.group.id(),
+              })
+            },
           },
-        },
-        m('p.title', 'Edit')
-      ),
-      m('p.groupSize', e.response),
-      m('button.btn-delete', {
-        onclick: () =>
-          deleteEvent(model)(e.objectId).fork(
-            onError(model),
-            onSuccess(reload)
-          ),
-      }),
+          m('p.title', e.title)
+        ),
+        m(
+          'button.btn',
+          {
+            onclick: () => {
+              model.state.event.id(e.objectId)
+              model.state.page('event')
+              model.state.modal(e)
+              model.toggleState('events-modal')
+            },
+          },
+          m('p.title', 'Edit')
+        ),
+        m('p.groupSize', e.response),
+        m('button.btn-delete', {
+          onclick: () =>
+            deleteEvent(model)(e.objectId).fork(
+              onError(model),
+              onSuccess(reload)
+            ),
+        }),
+      ]),
 
-      //=========================MODAL=============================================
-      model.getState('events-modal')
-        ? m(
-          Modal,
-          m('.modal-content', [
-            m(Editor, {
-              model,
-              page: 'event',
-              reload: model.state.reload,
-            }),
-            m(BtnClose, {
-              action: () => {
-                model.state.event.id('')
-                model.toggleState('events-modal')
-              },
-              label: 'Close',
-            }),
-          ])
-        )
-        : '',
-    ])
-  },
+      model.getEventBlock({
+        model,
+        event: e.objectId,
+        group: model.state.group.id(),
+      }) &&
+        m('.component', m(EventBlock, { model })) &&
+        console.log(e),
+    ]),
 }

@@ -20,7 +20,6 @@ export const Events = {
   },
   oncreate: ({ attrs: { model } }) => model.state.reload(),
   view: ({ attrs: { model } }) => {
-    console.log(model.events())
     return [
       m(
         '.events',
@@ -47,7 +46,6 @@ export const Events = {
           m('.modal-content', [
             m(Editor, {
               model,
-              page: 'event',
               reload: model.state.reload,
             }),
             m(BtnClose, {

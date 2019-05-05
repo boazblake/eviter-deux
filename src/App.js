@@ -28,17 +28,15 @@ export const App = (model) => ({
     render: () => m(Layout, { model }, m(GroupsPage, { model })),
   },
   '/:username/:group/events': {
-    onmatch: (args, path) => {
-      // console.log('args, path', args, path)
+    onmatch: () => {
       model.state.route('events')
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(EventsPage, { model })),
   },
   '/:username/:group/event/:eventId': {
-    onmatch: (args, path) => {
-      // console.log('args, path', args, path)
-      model.state.route('events')
+    onmatch: () => {
+      model.state.route('eventHome')
       checkAuth(model)
     },
     render: () => m(Layout, { model }, m(EventPage, { model })),

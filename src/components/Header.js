@@ -29,6 +29,15 @@ const actionsAt = {
       label: 'Add Event',
     }),
   ],
+  eventHome: (model) => [
+    m(Btn, {
+      action: () =>
+        m.route.set(
+          `/${model.user.name}/${makeRoute(model.state.group.name())}/events`
+        ),
+      label: 'Back to Group',
+    }),
+  ],
   newGroup: (model) => [
     m(Btn, {
       action: () => {

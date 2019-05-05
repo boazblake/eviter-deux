@@ -2,16 +2,12 @@ import m from 'mithril'
 
 import { makeRoute } from '../../utils/index.js'
 import { deleteGroup } from '../model.js'
-import Modal from '../../components/Modal.js'
-import { BtnClose } from '../../components/Btns.js'
-import { Editor } from '../../Editor/component.js'
 
 const onError = (model) => (errors) => {
   console.warn('errors', errors, model)
 }
 
-const onSuccess = (reload) => (res) => {
-  console.log('success', res)
+const onSuccess = (reload) => () => {
   reload()
 }
 
@@ -38,6 +34,7 @@ export const Group = {
             model.state.group.id(g.objectId)
             model.state.group.name(g.name)
             model.state.modal(g)
+            model.state.page('group')
             model.toggleState('groups-modal')
           },
         },
@@ -51,26 +48,6 @@ export const Group = {
             onSuccess(reload)
           ),
       }),
-      //=========================MODAL=============================================
-      model.getState('groups-modal')
-        ? m(
-          Modal,
-          m('.modal-content', [
-            m(Editor, {
-              model,
-              page: 'group',
-              reload: model.state.reload,
-            }),
-            m(BtnClose, {
-              action: () => {
-                model.state.group.id('')
-                model.toggleState('groups-modal')
-              },
-              label: 'Close',
-            }),
-          ])
-        )
-        : '',
     ])
   },
 }
