@@ -5,7 +5,6 @@ import {
   API_KEY,
   authSearchId,
   searchAuthToken,
-  locationIdKey,
 } from './secrets.js'
 
 const makeQuery = (string) => JSON.parse(JSON.stringify(string))
@@ -130,13 +129,7 @@ const lookupLocationTask = (query) => {
     m
       .request({
         method: 'GET',
-        url: `https://us1.locationiq.com/v1/search.php?key=${locationIdKey}?q=${query}`,
-        data: {
-          format: 'json',
-        },
-        headers: {
-          'content-type': 'application/json',
-        },
+        url: `https://nominatim.openstreetmap.org/search?q=${query}&format=json`,
       })
       .then(res, rej)
   )

@@ -9,9 +9,9 @@ const onSearchError = (state) => (error) => {
   state.errors = error
 }
 
-const onSearchSuccess = (state) => ({ suggestions }) => {
+const onSearchSuccess = (state) => (data) => {
   state.errors = ''
-  addresses = pluck('text', suggestions)
+  addresses = data
 }
 
 const onValidateError = (state) => (error) => {
@@ -90,14 +90,11 @@ export const eventForm = (state) => [
           {
             key: i,
             onclick: () => {
-              state.data.location = a
+              state.data.location = [a.lat, a.lon]
               addresses = []
-              http
-                .validateAddressTask(state.data.location.split(' ').join('+'))
-                .fork(onValidateError(state), onValidateSuccess(state))
             },
           },
-          a
+          a.display_name
         )
       ),
     ]),
