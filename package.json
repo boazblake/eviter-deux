@@ -53,7 +53,8 @@
     "jsonwebtoken": "^8.5.1",
     "mithril": "^2.0.0-rc.4",
     "mithril-stream": "^2.0.0",
-    "ramda": "^0.26.0"
+    "ramda": "^0.26.0",
+    "wrld.js": "^0.1.2050"
   },
   "scripts": {
     "dev": "yarn local:db && yarn web",

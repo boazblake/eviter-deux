@@ -1,6 +1,28 @@
 import m from 'mithril'
-
+import http from '../../http.js'
 import { format } from 'date-fns'
+import { pluck } from 'ramda'
+
+let addresses = []
+
+const onSearchError = (state) => (error) => {
+  state.errors = error
+}
+
+const onSearchSuccess = (state) => ({ suggestions }) => {
+  state.errors = ''
+  addresses = pluck('text', suggestions)
+}
+
+const onValidateError = (state) => (error) => {
+  state.errors = error
+}
+
+const onValidateSuccess = (state) => (data) => {
+  state.errors = ''
+  console.log(data)
+  // addresses = pluck('text', suggestions)
+}
 
 export const groupForm = (state) => [
   m('fieldset.fieldset', [
@@ -55,10 +77,29 @@ export const eventForm = (state) => [
         type: 'textarea',
         id: 'location',
         name: 'location',
-        onchange: (e) => {
+        onkeyup: (e) => {
           state.data.location = e.target.value
+          http
+            .lookupLocationTask(state.data.location)
+            .fork(onSearchError(state), onSearchSuccess(state))
         },
       }),
+      addresses.map((a, i) =>
+        m(
+          'li',
+          {
+            key: i,
+            onclick: () => {
+              state.data.location = a
+              addresses = []
+              http
+                .validateAddressTask(state.data.location.split(' ').join('+'))
+                .fork(onValidateError(state), onValidateSuccess(state))
+            },
+          },
+          a
+        )
+      ),
     ]),
     m('.fields', [
       m('label', { for: 'startDate' }, 'startDate'),

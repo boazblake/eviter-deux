@@ -6,6 +6,23 @@ export const animateComponentEntrance = (idx) => ({ dom }) => {
   }, idx * 100 + 20)
 }
 
+export const slideComponentDown = (idx) => ({ dom }) => {
+  dom.style.opacity = 0
+  return setTimeout(() => {
+    dom.classList.toggle('slideDown')
+    dom.style.opacity = 1
+  }, idx * 100 + 20)
+}
+
+export const slideComponentUp = (idx) => ({ dom }) => {
+  return new Promise(() => {
+    dom.classList.remove('slideDown')
+    return setTimeout(() => {
+      dom.classList.add('fadeOut')
+    }, idx * 100 + 20)
+  })
+}
+
 export const animateSidebarEntrance = ({ dom }) => {
   dom.style.opacity = 0
   dom.classList.toggle('slideRight')

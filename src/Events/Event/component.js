@@ -51,13 +51,10 @@ export const Event = {
             ),
         }),
       ]),
-
       model.getEventBlock({
         model,
         event: e.objectId,
         group: model.state.group.id(),
-      }) &&
-        m('.component', m(EventBlock, { model })) &&
-        console.log(e),
+      }) && m('.component', m(EventBlock, { model, e })),
     ]),
 }

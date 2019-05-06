@@ -1,5 +1,12 @@
 import Task from 'data.task'
-import { baseUrl, APP_ID, API_KEY } from './secrets.js'
+import {
+  baseUrl,
+  APP_ID,
+  API_KEY,
+  authSearchId,
+  searchAuthToken,
+  locationIdKey,
+} from './secrets.js'
 
 const makeQuery = (string) => JSON.parse(JSON.stringify(string))
 
@@ -100,6 +107,49 @@ const deleteTask = (model) => (url) => (id) => {
       .then(parseHttpSuccess(model)(res), parseHttpError(model)(rej))
   )
 }
-const http = { postQl, postTask, getTask, putTask, deleteTask }
+
+const lookupAddressTask = (query) => {
+  return new Task((rej, res) =>
+    m
+      .request({
+        method: 'GET',
+        url: `https://us-autocomplete.api.smartystreets.com/suggest?key=9717630468950328&
+auth-id=${authSearchId}&auth-token=${searchAuthToken}&prefix=${query}`,
+        referer: 'http://localhost:3000/*',
+        headers: {
+          'content-type': 'application/json',
+          // Host: 'us-street.api.smartystreets.com',
+        },
+      })
+      .then(res, rej)
+  )
+}
+
+const lookupLocationTask = (query) => {
+  return new Task((rej, res) =>
+    m
+      .request({
+        method: 'GET',
+        url: `https://us1.locationiq.com/v1/search.php?key=${locationIdKey}?q=${query}`,
+        data: {
+          format: 'json',
+        },
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+      .then(res, rej)
+  )
+}
+
+const http = {
+  postQl,
+  postTask,
+  getTask,
+  putTask,
+  deleteTask,
+  lookupAddressTask,
+  lookupLocationTask,
+}
 
 export default http
